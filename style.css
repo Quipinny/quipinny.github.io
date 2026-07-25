@@ -1,0 +1,50 @@
+/* Убираем отступы браузера по умолчанию */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Фон на весь экран */
+.background {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("background.png");
+  background-size: cover;      /* картинка растягивается на весь экран */
+  background-position: center; /* и центрируется */
+  overflow: hidden;
+}
+
+/* Блок с кнопками — расположи там, где нужно на макете */
+.buttons {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(1.05);
+}
+
+/* Анимация (гифка/видео) — тоже подвинь под свой макет */
+.animation {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  width: 200px;      /* подбери размер под свою анимацию */
+  border-radius: 12px;
+}

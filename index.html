@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мой сайт</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+  <!-- Фоновая картинка на весь экран -->
+  <div class="background">
+
+    <!-- Кнопки -->
+    <div class="buttons">
+      <button class="btn" onclick="window.location.href='https://example.com'">Кнопка 1</button>
+      <button class="btn" onclick="alert('Привет!')">Кнопка 2</button>
+    </div>
+
+    <!-- Видео/анимация (mp4 вариант) -->
+    <video class="animation" autoplay loop muted playsinline>
+      <source src="animation.mp4" type="video/mp4">
+    </video>
+
+    <!-- Если вместо видео у тебя обычная GIF-картинка, используй так:
+    <img class="animation" src="animation.gif" alt="анимация">
+    и удали блок <video> выше -->
+
+  </div>
+
+</body>
+</html>
