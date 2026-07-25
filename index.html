@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мой сайт</title>
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+
+  <!-- .page — это "холст" с картинкой дизайна, всё остальное лежит поверх него -->
+  <div class="page">
+
+    <!-- Видео-фон, задаёт высоту всей страницы -->
+    <video class="design" autoplay loop muted playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <!-- Кнопка HIRE — открывает почту -->
+    <a href="mailto:quipinny@gmail.com" class="btn-video btn-hire" aria-label="Написать на почту">
+      <video autoplay loop muted playsinline>
+        <source src="button1.mp4" type="video/mp4">
+      </video>
+    </a>
+
+    <!-- Кнопка feedback — открывает PDF с отзывами -->
+    <a href="feedback.pdf" target="_blank" class="btn-video btn-feedback" aria-label="Отзывы">
+      <video autoplay loop muted playsinline>
+        <source src="button3.mp4" type="video/mp4">
+      </video>
+    </a>
+
+    <!-- Кнопка portfolio — ведёт на quipinny.com -->
+    <a href="https://quipinny.com" class="btn-video btn-portfolio" aria-label="Портфолио">
+      <video autoplay loop muted playsinline>
+        <source src="button2.mp4" type="video/mp4">
+      </video>
+    </a>
+
+  </div>
+
+</body>
+</html>
