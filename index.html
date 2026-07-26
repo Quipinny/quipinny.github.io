@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мой сайт</title>
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+
+  <!-- .page — это "холст" с картинкой дизайна, всё остальное лежит поверх него -->
+  <div class="page">
+
+    <!-- Видео-фон, задаёт высоту всей страницы -->
+    <video class="design" autoplay loop muted playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <!-- Кнопка HIRE — открывает почту -->
+    <a href="mailto:quipinny@gmail.com" class="btn-video btn-hire" aria-label="Написать на почту" onclick="playBtn(event, this)">
+      <img class="btn-static" src="button1_static.png" alt="">
+      <img class="btn-gif" src="button1.gif" alt="">
+    </a>
+
+    <!-- Кнопка feedback — открывает PDF с отзывами -->
+    <a href="feedback.pdf" target="_blank" class="btn-video btn-feedback" aria-label="Отзывы" onclick="playBtn(event, this)">
+      <img class="btn-static" src="button3_static.png" alt="">
+      <img class="btn-gif" src="button3.gif" alt="">
+    </a>
+
+    <!-- Кнопка portfolio — ведёт на отдельную страницу портфолио -->
+    <a href="https://quipinny.com/portfolio" class="btn-video btn-portfolio" aria-label="Портфолио" onclick="playBtn(event, this)">
+      <img class="btn-static" src="button2_static.png" alt="">
+      <img class="btn-gif" src="button2.gif" alt="">
+    </a>
+
+  </div>
+
+  <script>
+    // Задержка в миллисекундах перед переходом по ссылке —
+    // ровно столько, сколько длится твоя gif-анимация (плюс небольшой запас).
+    // Подгони под свою реальную анимацию.
+    const ANIMATION_DURATION = 250;
+
+    function playBtn(event, link) {
+      // Останавливаем мгновенный переход по ссылке —
+      // сначала покажем анимацию, потом перейдём сами через JS.
+      event.preventDefault();
+
+      const oldGif = link.querySelector('.btn-gif');
+      const stat = link.querySelector('.btn-static');
+
+      // Создаём НОВЫЙ img с тем же адресом (без изменений!).
+      // Файл уже лежит в кэше браузера (загрузился при открытии страницы),
+      // поэтому подгружается мгновенно — но при этом браузер считает
+      // его "новым" элементом и проигрывает gif заново с первого кадра.
+      const baseSrc = oldGif.getAttribute('src');
+      const newGif = document.createElement('img');
+      newGif.className = 'btn-gif';
+      newGif.alt = '';
+      newGif.src = baseSrc;
+      oldGif.replaceWith(newGif);
+
+      stat.style.display = 'none';
+      newGif.style.display = 'block';
+
+      setTimeout(() => {
+        const href = link.getAttribute('href');
+        const target = link.getAttribute('target');
+        if (target === '_blank') {
+          window.open(href, '_blank');
+        } else {
+          window.location.href = href;
+        }
+        // Возвращаем статичную картинку обратно на всякий случай
+        // (если ссылка открылась в новой вкладке, а эта страница осталась открыта)
+        newGif.style.display = 'none';
+        stat.style.display = 'block';
+      }, ANIMATION_DURATION);
+    }
+  </script>
+
+</body>
+</html>
