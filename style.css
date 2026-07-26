@@ -1,0 +1,190 @@
+/* Убираем отступы браузера по умолчанию */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100%;
+  background: #000; /* цвет по бокам, если экран шире картинки — подбери свой */
+}
+
+/* .page — внешняя рамка. На десктопе просто на всю ширину экрана.
+   На мобильных — overflow: hidden обрезает всё, что вылезает за края
+   (а вылезать оно будет специально, см. .canvas в медиа-запросе ниже). */
+.page {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* .canvas — сам дизайн целиком: фон + все кнопки/тексты внутри него.
+   На десктопе — просто 100% ширины, ничего не меняется.
+   На мобильных увеличивается и сдвигается как единое целое (см. медиа-запрос) —
+   все дочерние элементы (кнопки, текст) в % от .canvas, поэтому
+   двигаются/масштабируются вместе с ним, ничего пересчитывать не нужно. */
+.canvas {
+  position: relative;
+  width: 100%;
+}
+
+/* Картинка растягивается на всю ширину .canvas,
+   высота считается автоматически — пропорции не ломаются */
+.design {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ===== Адаптив для телефонов ===== */
+/* Обрезаем дизайн шириной 2046px до центральной полосы 984px
+   (нашёл координаты сравнением с макетом: полоса начинается на 534px
+   от левого края). Работает как "зум" — canvas становится шире экрана,
+   а .page с overflow:hidden обрезает то, что вылезло за края. */
+@media (max-width: 700px) {
+  .canvas {
+    width: 207.93%;        /* 2046 / 984 * 100% — во столько раз увеличиваем */
+    margin-left: -54.27%;  /* 534 / 984 * 100% — сдвигаем влево, чтобы нужная полоса встала по центру экрана */
+  }
+}
+
+/* Кнопки и анимация — position: absolute относительно .canvas,
+   а координаты в процентах (%), а не в пикселях.
+   Так они всегда останутся на нужном месте картинки,
+   на любом размере экрана. */
+
+/* Кнопки-видео — position: absolute относительно .page,
+   координаты в процентах, посчитаны от холста 2046x4938.
+   Ссылка <a> задаёт кликабельную область и размер,
+   видео внутри просто заполняет её на 100%. */
+
+.btn-video {
+  position: absolute;
+  display: block;
+  cursor: pointer;
+}
+
+.btn-video img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* По умолчанию гифка спрятана, показывается только при клике через JS */
+.btn-video .btn-gif {
+  display: none;
+}
+
+/* HIRE — почта */
+.btn-hire {
+  top: 32.20%;
+  left: 43.40%;
+  width: 12.86%;
+  height: 2.65%;
+}
+
+/* feedback — PDF с отзывами */
+.btn-feedback {
+  top: 48.12%;
+  left: 42.23%;
+  width: 16.37%;
+  height: 3.99%;
+}
+
+/* portfolio — quipinny.com */
+.btn-portfolio {
+  top: 52.49%;
+  left: 40.76%;
+  width: 19.01%;
+  height: 5.20%;
+}
+
+/* ===== Текстовые блоки ===== */
+/* Координаты найдены сравнением с макетом (в процентах от холста 2046x4938).
+   Размер шрифта задан в vw — так текст всегда масштабируется вместе
+   с картинкой на любом экране (комментарий показывает исходный размер в px
+   при ширине холста 2046px — если нужно крупнее/мельче, поменяй именно эти px
+   и пересчитай: vw = px / 2046 * 100). */
+
+.text-box {
+  position: absolute;
+  font-family: 'Pixelify Sans', monospace;
+  color: #3a1414;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Блок "Why Work With Me" — между "Work with me!" и кнопкой HIRE */
+.text-why {
+  top: 26.65%;
+  left: 36.95%;
+  width: 26.25%;
+  height: 5.16%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5vw;
+  padding: 0.5vw;
+}
+
+.text-why .txt-title {
+  font-weight: 700;
+  font-size: 1.66vw;  /* ≈34px при ширине холста 2046px */
+  margin: 0;
+}
+
+.text-why .txt-pricing {
+  margin-top: 0.5vw;
+}
+
+.text-why .txt-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.22vw; /* ≈25px, было ≈20px */
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.text-why .txt-list li::before {
+  content: "· ";
+}
+
+/* Переливающаяся градиентом цена */
+.text-why .txt-price {
+  font-weight: 700;
+  font-size: 1.86vw; /* ≈38px, было ≈30px */
+  margin: 0;
+  background: linear-gradient(90deg, #ffd54a, #ff5252, #ffd54a, #8a1a1a, #ffd54a);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* Блок текста внутри белой речевой облачки над кошкой */
+.text-bubble {
+  top: 64.16%;
+  left: 31.08%;
+  width: 38.42%;
+  height: 5.95%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8vw 1.2vw;
+}
+
+.text-bubble p {
+  margin: 0;
+  font-size: 1.08vw; /* ≈22px, было ≈18px */
+  font-weight: 500;
+  line-height: 1.45;
+}
