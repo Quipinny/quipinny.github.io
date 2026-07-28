@@ -145,6 +145,9 @@ body {
 
 .text-why .txt-pricing {
   margin-top: 0.3vw;
+  color: #8a1a1a;           /* акцентный красный — выделяет "Pricing" на фоне списка */
+  letter-spacing: 0.08em;   /* небольшая разрядка букв — тоже помогает выделить */
+  text-transform: uppercase;
 }
 
 .text-why .txt-list {
@@ -159,29 +162,42 @@ body {
   content: "· ";
 }
 
-/* Переливающаяся градиентом цена — спокойнее, без резких перепадов цвета */
+/* Переливающаяся градиентом цена — темнее и "пиксельными" жёсткими полосами
+   вместо плавного перехода (подходит под пиксель-арт стиль).
+   background-clip: text прописан с явным порядком свойств для надёжности. */
 .text-why .txt-price {
   font-size: calc(1.56vw * var(--txt-scale)); /* ≈32px */
   margin: 0;
   line-height: 1.25;
-  background: linear-gradient(90deg, #d4a24a, #f0c674, #d4a24a);
-  background-size: 200% 100%;
+  display: inline-block;
+  background-image: linear-gradient(
+    90deg,
+    #6b3f14 0%,   #6b3f14 12%,
+    #a8752e 12%,  #a8752e 24%,
+    #d4a24a 24%,  #d4a24a 36%,
+    #a8752e 36%,  #a8752e 48%,
+    #6b3f14 48%,  #6b3f14 60%,
+    #a8752e 60%,  #a8752e 72%,
+    #d4a24a 72%,  #d4a24a 84%,
+    #a8752e 84%,  #a8752e 100%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: shimmer 4s ease-in-out infinite;
+  animation: shimmer 5s linear infinite;
 }
 
 @keyframes shimmer {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0%   { background-position: 0% 0; }
+  100% { background-position: -250% 0; }
 }
 
 /* Блок текста внутри белой речевой облачки над кошкой.
-   Поле ≈786x294px (масштаб холста 2046px) — размер шрифта подобран
-   так, чтобы абзац заполнял поле, но не вылезал за края. */
+   У пузыря снизу сужение в "хвостик" — реальная полезная область под текст
+   меньше, чем вся рамка поля, поэтому размер шрифта беру с запасом. */
 .text-bubble {
   top: 64.16%;
   left: 31.08%;
@@ -190,11 +206,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.3vw 0.6vw;
+  padding: 0.2vw 0.7vw;
 }
 
 .text-bubble p {
   margin: 0;
-  font-size: calc(1.42vw * var(--txt-scale)); /* ≈29px */
-  line-height: 1.3;
+  font-size: calc(1.17vw * var(--txt-scale)); /* ≈24px, было ≈29px */
+  line-height: 1.25;
 }
