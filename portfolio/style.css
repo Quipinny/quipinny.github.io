@@ -1,0 +1,122 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #1a0f0f; /* тёмный, в тон театральной теме главной страницы */
+  color: #f0e6d2;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+}
+
+/* ===== Верхняя навигация — липкая, всегда видна при скролле ===== */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #2a1414;
+  border-bottom: 3px solid #8a1a1a;
+}
+
+.topnav-logo {
+  color: #f0c674;
+  text-decoration: none;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+}
+
+.topnav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topnav-links a {
+  color: #f0e6d2;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 2px solid #6b3f14;
+  border-radius: 4px;
+  background: #3a1f1f;
+  transition: 0.15s;
+}
+
+.topnav-links a:hover {
+  background: #8a1a1a;
+  border-color: #f0c674;
+}
+
+/* ===== Секции категорий ===== */
+.category-section {
+  padding: 0 20px 40px;
+  scroll-margin-top: 70px; /* чтобы при переходе по ссылке заголовок не прятался под топ-навигацию */
+}
+
+/* Липкий заголовок секции — прилипает под топ-навигацией, пока листаешь эту категорию */
+.section-title {
+  position: sticky;
+  top: 58px; /* высота топ-навигации */
+  z-index: 50;
+  background: #1a0f0f;
+  padding: 16px 0 10px;
+  font-size: 20px;
+  color: #f0c674;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid #6b3f14;
+}
+
+/* ===== Сетка карточек ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  padding-top: 16px;
+}
+
+.card {
+  background: #2a1414;
+  border: 2px solid #6b3f14;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain; /* показывает картинку целиком, без обрезки, даже если пропорции разные */
+  background: #14090a;
+  image-rendering: pixelated; /* чёткие пиксели без размытия при масштабировании */
+}
+
+.card figcaption {
+  padding: 8px;
+  font-size: 11px;
+  text-align: center;
+  color: #cbb89a;
+}
+
+/* На маленьких экранах — карточки чуть меньше, навигация компактнее */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+  .card img {
+    height: 130px;
+  }
+  .topnav {
+    padding: 10px 14px;
+  }
+}
