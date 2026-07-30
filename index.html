@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="style.css?v=10" rel="stylesheet"/>
+<link href="style.css?v=12" rel="stylesheet"/>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Person",
@@ -62,9 +62,81 @@
 <img alt="Portfolio" class="btn-static" src="button2_static.png"/>
 <img alt="Portfolio" class="btn-gif" src="button2.gif"/>
 </a>
+
+<!-- Блок "My Socials" — клик по коврику разворачивает анимацию с 3 ссылками -->
+<div class="socials-wrap" id="socialsWrap">
+  <!-- Кликабельная зона по надписи "my socials" (видна, когда всё закрыто) -->
+  <div class="socials-trigger" id="socialsTrigger" onclick="toggleSocials()"></div>
+
+  <!-- Видео разворота — играет один раз, останавливается на последнем кадре (открыто) -->
+  <video class="socials-video" id="socialsOpenVideo" muted playsinline src="socials_open.mp4"></video>
+  <!-- Видео закрытия (реверс) — играет один раз, возвращает на первый кадр (закрыто) -->
+  <video class="socials-video" id="socialsCloseVideo" muted playsinline src="socials_close.mp4" style="display:none;"></video>
+
+  <!-- Кликабельные зоны на открытом коврике — видны/активны только когда развёрнуто -->
+  <a class="socials-link socials-youtube" id="linkYoutube" href="https://www.youtube.com/@quipinny" target="_blank" aria-label="YouTube"></a>
+  <a class="socials-link socials-itchio" id="linkItchio" href="https://quipinny.itch.io/" target="_blank" aria-label="itch.io"></a>
+  <a class="socials-link socials-instagram" id="linkInstagram" href="https://www.instagram.com/quipinny/" target="_blank" aria-label="Instagram"></a>
+
+  <!-- Клик в любое пустое место открытого коврика — закрывает раньше таймера -->
+  <div class="socials-close-area" id="socialsCloseArea" onclick="closeSocials()"></div>
+</div>
 </div>
 </div>
 <script>
+    // ===== Блок "My Socials" =====
+    let socialsOpen = false;
+    let socialsAutoCloseTimer = null;
+    const SOCIALS_AUTO_CLOSE_MS = 40000; // 40 секунд — поменяй тут, если нужно другое время
+
+    function toggleSocials() {
+      if (socialsOpen) {
+        closeSocials();
+      } else {
+        openSocials();
+      }
+    }
+
+    function openSocials() {
+      socialsOpen = true;
+      const trigger = document.getElementById('socialsTrigger');
+      const openVideo = document.getElementById('socialsOpenVideo');
+      const closeVideo = document.getElementById('socialsCloseVideo');
+      const wrap = document.getElementById('socialsWrap');
+
+      trigger.style.display = 'none';
+      closeVideo.style.display = 'none';
+      openVideo.style.display = 'block';
+      openVideo.currentTime = 0;
+      openVideo.play();
+      wrap.classList.add('is-open');
+
+      clearTimeout(socialsAutoCloseTimer);
+      socialsAutoCloseTimer = setTimeout(closeSocials, SOCIALS_AUTO_CLOSE_MS);
+    }
+
+    function closeSocials() {
+      if (!socialsOpen) return;
+      socialsOpen = false;
+      clearTimeout(socialsAutoCloseTimer);
+
+      const trigger = document.getElementById('socialsTrigger');
+      const openVideo = document.getElementById('socialsOpenVideo');
+      const closeVideo = document.getElementById('socialsCloseVideo');
+      const wrap = document.getElementById('socialsWrap');
+
+      wrap.classList.remove('is-open');
+      openVideo.style.display = 'none';
+      closeVideo.style.display = 'block';
+      closeVideo.currentTime = 0;
+      closeVideo.play();
+
+      closeVideo.onended = () => {
+        closeVideo.style.display = 'none';
+        trigger.style.display = 'block';
+      };
+    }
+</script>
     // Задержка в миллисекундах перед переходом по ссылке —
     // ровно столько, сколько длится твоя gif-анимация (плюс небольшой запас).
     // Подгони под свою реальную анимацию.
@@ -106,6 +178,9 @@
         stat.style.display = 'block';
       }, ANIMATION_DURATION);
     }
+  </script>
+</body>
+</html>
   </script>
 </body>
 </html>
