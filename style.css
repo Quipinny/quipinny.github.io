@@ -138,7 +138,7 @@ body {
 
 .text-why .txt-title {
   font-weight: 700;
-  font-size: calc(1.37vw * var(--txt-scale));  /* ≈28px */
+  font-size: calc(1.55vw * var(--txt-scale));  /* ≈32px, было ≈28px — крупнее */
   margin: 0;
   line-height: 1.25;
 }
@@ -154,45 +154,37 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: calc(1.17vw * var(--txt-scale)); /* ≈24px */
-  line-height: 1.25;
+  font-size: calc(1.02vw * var(--txt-scale)); /* ≈21px, было ≈24px — мельче, для контраста с Pricing */
+  line-height: 1.3;
 }
 
 .text-why .txt-list li::before {
   content: "· ";
 }
 
-/* Переливающаяся градиентом цена — темнее и "пиксельными" жёсткими полосами
-   вместо плавного перехода (подходит под пиксель-арт стиль).
-   background-clip: text прописан с явным порядком свойств для надёжности. */
+/* Переливающаяся градиентом цена — плавный переход (как в первой версии),
+   но приглушённые тёмно-золотые тона вместо ярких. Диапазон движения
+   градиента остаётся ВНУТРИ 0–100%, чтобы под текстом никогда
+   не оказывалось "пустого" места — раньше от этого текст пропадал. */
 .text-why .txt-price {
   font-size: calc(1.56vw * var(--txt-scale)); /* ≈32px */
   margin: 0;
   line-height: 1.25;
   display: inline-block;
-  background-image: linear-gradient(
-    90deg,
-    #6b3f14 0%,   #6b3f14 12%,
-    #a8752e 12%,  #a8752e 24%,
-    #d4a24a 24%,  #d4a24a 36%,
-    #a8752e 36%,  #a8752e 48%,
-    #6b3f14 48%,  #6b3f14 60%,
-    #a8752e 60%,  #a8752e 72%,
-    #d4a24a 72%,  #d4a24a 84%,
-    #a8752e 84%,  #a8752e 100%
-  );
-  background-size: 250% 100%;
+  background-image: linear-gradient(90deg, #8a5a1e, #d4a24a, #8a5a1e);
+  background-size: 200% 100%;
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: shimmer 5s linear infinite;
+  animation: shimmer 4s ease-in-out infinite;
 }
 
 @keyframes shimmer {
   0%   { background-position: 0% 0; }
-  100% { background-position: -250% 0; }
+  50%  { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
 }
 
 /* Блок текста внутри белой речевой облачки над кошкой.
@@ -214,3 +206,90 @@ body {
   font-size: calc(1.17vw * var(--txt-scale)); /* ≈24px, было ≈29px */
   line-height: 1.25;
 }
+
+/* ===== "My Socials" — разворачивающийся коврик с 3 ссылками ===== */
+/* Все координаты найдены точным сравнением твоих PNG (закрыто/открыто)
+   и подгонкой gif-анимации под холст 2046x4938. */
+
+.socials-wrap {
+  position: absolute;
+  top: 57.72%;
+  left: 0;
+  width: 100%;
+  height: 5.95%; /* высота полосы анимации (2850–3144px в масштабе холста) */
+}
+
+/* Кликабельная зона по надписи "my socials" в закрытом состоянии */
+.socials-trigger {
+  position: absolute;
+  cursor: pointer;
+  /* координаты относительно всего холста .canvas, поэтому пересчитаны
+     в проценты от .socials-wrap (а не от всего холста) */
+  top: calc((58.69% - 57.72%) / 5.95% * 100%);
+  left: calc((33.72% - 0%) / 100% * 100%);
+  width: 33.09%;
+  height: calc(1.56% / 5.95% * 100%);
+  z-index: 2;
+}
+
+/* Видео открытия/закрытия — заполняют всю полосу */
+.socials-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none; /* клики проходят "сквозь" видео к ссылкам поверх */
+}
+
+/* Ссылки на открытом коврике — по умолчанию не кликабельны и невидимы для кликов,
+   пока коврик не открыт (иначе будут перехватывать клики по закрытому "my socials") */
+.socials-link {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.socials-wrap.is-open .socials-link {
+  pointer-events: auto;
+}
+
+.socials-youtube {
+  top: calc((59.17% - 57.72%) / 5.95% * 100%);
+  left: calc((35.78% - 0%) / 100% * 100%);
+  width: 13.73%;
+  height: calc(1.68% / 5.95% * 100%);
+}
+
+.socials-itchio {
+  top: calc((59.17% - 57.72%) / 5.95% * 100%);
+  left: calc((53.96% - 0%) / 100% * 100%);
+  width: 10.51%;
+  height: calc(1.32% / 5.95% * 100%);
+}
+
+.socials-instagram {
+  top: calc((61.24% - 57.72%) / 5.95% * 100%);
+  left: calc((42.23% - 0%) / 100% * 100%);
+  width: 16.67%;
+  height: calc(1.56% / 5.95% * 100%);
+}
+
+/* Клик в пустое место открытого коврика — закрывает раньше таймера.
+   Лежит НИЖЕ ссылок по z-index, поэтому клик по самим словам их не перекрывает. */
+.socials-close-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  cursor: pointer;
+  pointer-events: none;
+}
+
+.socials-wrap.is-open .socials-close-area {
+  pointer-events: auto;
+}
+
