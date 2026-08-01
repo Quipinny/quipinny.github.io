@@ -145,17 +145,15 @@ body {
 
 .text-why .txt-pricing {
   margin-top: 0.3vw;
-  color: #8a1a1a;           /* акцентный красный — выделяет "Pricing" на фоне списка */
-  letter-spacing: 0.08em;   /* небольшая разрядка букв — тоже помогает выделить */
-  text-transform: uppercase;
+  color: #8a1a1a; /* акцентный красный — выделяет "Pricing" на фоне списка */
 }
 
 .text-why .txt-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: calc(1.02vw * var(--txt-scale)); /* ≈21px, было ≈24px — мельче, для контраста с Pricing */
-  line-height: 1.3;
+  font-size: calc(1.15vw * var(--txt-scale)); /* ≈23px — строк стало меньше, места больше */
+  line-height: 1.35;
 }
 
 .text-why .txt-list li::before {
@@ -203,8 +201,8 @@ body {
 
 .text-bubble p {
   margin: 0;
-  font-size: calc(1.17vw * var(--txt-scale)); /* ≈24px, было ≈29px */
-  line-height: 1.25;
+  font-size: calc(1.3vw * var(--txt-scale)); /* ≈27px — текст короче, можно чуть крупнее */
+  line-height: 1.3;
 }
 
 /* ===== "My Socials" — разворачивающийся коврик с 3 ссылками ===== */
@@ -292,4 +290,3 @@ body {
 .socials-wrap.is-open .socials-close-area {
   pointer-events: auto;
 }
-
