@@ -5,10 +5,17 @@
 }
 
 body {
-  background: #1a0f0f; /* тёмный, в тон театральной теме главной страницы */
+  /* Бесконечный тайловый паттерн из background2.png (328x1080px, вертикальные полосы) */
+  background-image: url("background2.png");
+  background-repeat: repeat;
+  background-size: 328px 1080px; /* родной размер картинки — чтобы плитки стыковались без швов */
   color: #f0e6d2;
   font-family: 'Silkscreen', monospace;
   font-weight: 700;
+  /* Защита от копирования текста/долгого тапа на телефоне (см. общее примечание внизу файла) */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* ===== Верхняя навигация — липкая, всегда видна при скролле ===== */
@@ -21,16 +28,20 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  padding: 14px 20px;
+  padding: 10px 20px;
   background: #2a1414;
   border-bottom: 3px solid #8a1a1a;
 }
 
 .topnav-logo {
-  color: #f0c674;
-  text-decoration: none;
-  font-size: 18px;
-  letter-spacing: 0.05em;
+  display: block;
+}
+
+.topnav-logo img {
+  height: 40px;
+  width: auto;
+  display: block;
+  -webkit-user-drag: none; /* нельзя перетащить картинку мышкой, чтобы сохранить */
 }
 
 .topnav-links {
@@ -42,6 +53,8 @@ body {
 .topnav-links a {
   color: #f0e6d2;
   text-decoration: none;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
   font-size: 13px;
   padding: 6px 12px;
   border: 2px solid #6b3f14;
@@ -68,6 +81,8 @@ body {
   z-index: 50;
   background: #1a0f0f;
   padding: 16px 0 10px;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
   font-size: 20px;
   color: #f0c674;
   letter-spacing: 0.08em;
@@ -90,14 +105,24 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  cursor: pointer; /* подсказывает, что можно кликнуть и увеличить */
+  transition: transform 0.15s, border-color 0.15s;
 }
 
-.card img {
+.card:hover {
+  transform: scale(1.03);
+  border-color: #f0c674;
+}
+
+.card img,
+.card video {
   width: 100%;
   height: 180px;
   object-fit: contain; /* показывает картинку целиком, без обрезки, даже если пропорции разные */
   background: #14090a;
   image-rendering: pixelated; /* чёткие пиксели без размытия при масштабировании */
+  -webkit-user-drag: none;
+  pointer-events: none; /* клик всегда попадает на .card, а не на видео/картинку внутри */
 }
 
 .card figcaption {
@@ -107,16 +132,55 @@ body {
   color: #cbb89a;
 }
 
+/* ===== Лайтбокс — увеличенный просмотр по клику ===== */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 5, 0.92);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  cursor: zoom-out;
+}
+
+.lightbox.is-open {
+  display: flex;
+}
+
+.lightbox-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: default;
+}
+
+.lightbox-content img,
+.lightbox-content video {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  image-rendering: pixelated;
+  border: 3px solid #6b3f14;
+  border-radius: 6px;
+  -webkit-user-drag: none;
+}
+
 /* На маленьких экранах — карточки чуть меньше, навигация компактнее */
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 10px;
   }
-  .card img {
+  .card img,
+  .card video {
     height: 130px;
   }
   .topnav {
-    padding: 10px 14px;
+    padding: 8px 14px;
+  }
+  .topnav-logo img {
+    height: 30px;
   }
 }
