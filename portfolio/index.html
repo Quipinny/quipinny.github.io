@@ -7,13 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
-<body>
+<body oncontextmenu="return false;">
 
   <!-- Верхняя навигация — липкая (всегда видна сверху), ссылки на категории -->
   <nav class="topnav" id="topnav">
-    <a href="../" class="topnav-logo">Quipinny</a>
+    <a href="../" class="topnav-logo"><img src="Logo.png" alt="Quipinny"></a>
     <div class="topnav-links" id="topnav-links">
       <!-- Заполняется автоматически из списка категорий в script.js -->
     </div>
@@ -21,6 +21,11 @@
 
   <!-- Сюда JS вставит все секции с работами -->
   <main id="gallery"></main>
+
+  <!-- Лайтбокс — увеличенный просмотр работы по клику -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-content" id="lightboxContent"></div>
+  </div>
 
   <script src="works.js"></script>
   <script src="script.js"></script>
