@@ -9,7 +9,7 @@
 const WORKS = [
   // ===== Best =====
   { category: "Best", file: "assets/Best/DW95jL.png", thumb: "thumbs/Best/DW95jL.jpg", title: "" },
-  { category: "Best", file: "assets/Best/This creature shouldn’t exist  #horrortok #pixelart #horror #analoguehorror.mp4", thumb: "thumbs/Best/This creature shouldn’t exist  #horrortok #pixelart #horror #analoguehorror.jpg", title: "" },
+  { category: "Best", file: "assets/Best/r.mp4", thumb: "thumbs/Best/r.jpg", title: "" },
   { category: "Best", file: "assets/Best/houses2.gif", thumb: "thumbs/Best/houses2.jpg", title: "" },
   { category: "Best", file: "assets/screenshots/zFchve9oU3Rl_rzgP3NkLqQKvCJEhM3HsF64XPRNzRtD6I8be_dM8Iu_4kuY8USq3Oq_8i5cAG2gep6-nmlMau4G.jpg", thumb: "thumbs/screenshots/zFchve9oU3Rl_rzgP3NkLqQKvCJEhM3HsF64XPRNzRtD6I8be_dM8Iu_4kuY8USq3Oq_8i5cAG2gep6-nmlMau4G.jpg", title: "" },
   { category: "Best", file: "assets/Best/4qeoB_.png", thumb: "thumbs/Best/4qeoB_.jpg", title: "" },
