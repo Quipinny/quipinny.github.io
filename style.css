@@ -48,6 +48,18 @@ img, video {
   height: auto;
 }
 
+/* Свечение под звёздами — того же размера, что и весь холст,
+   поэтому просто накладывается поверх один в один, без координат */
+.light-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none; /* не мешает кликать по кнопкам под/над ним */
+  z-index: 1;
+}
+
 /* ===== Адаптив для телефонов ===== */
 /* Обрезаем дизайн шириной 2046px до центральной полосы 984px
    (нашёл координаты сравнением с макетом: полоса начинается на 534px
@@ -77,6 +89,7 @@ img, video {
   position: absolute;
   display: block;
   cursor: pointer;
+  z-index: 2;
 }
 
 .btn-video img {
