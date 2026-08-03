@@ -99,6 +99,7 @@ body {
 }
 
 .card {
+  position: relative;
   background: #2a1414;
   border: 2px solid #6b3f14;
   border-radius: 6px;
@@ -114,15 +115,28 @@ body {
   border-color: #f0c674;
 }
 
-.card img,
-.card video {
+.card img {
   width: 100%;
   height: 180px;
   object-fit: contain; /* показывает картинку целиком, без обрезки, даже если пропорции разные */
   background: #14090a;
   image-rendering: pixelated; /* чёткие пиксели без размытия при масштабировании */
   -webkit-user-drag: none;
-  pointer-events: none; /* клик всегда попадает на .card, а не на видео/картинку внутри */
+  pointer-events: none; /* клик всегда попадает на .card */
+}
+
+/* Значок "▶" поверх превью гифок/видео — подсказывает, что там анимация */
+.play-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.6);
+  color: #f0c674;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  pointer-events: none;
 }
 
 .card figcaption {
@@ -173,8 +187,7 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 10px;
   }
-  .card img,
-  .card video {
+  .card img {
     height: 130px;
   }
   .topnav {
