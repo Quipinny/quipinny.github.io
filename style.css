@@ -314,3 +314,28 @@ img, video {
 .socials-wrap.is-open .socials-close-area {
   pointer-events: auto;
 }
+
+/* Всплывающее уведомление снизу экрана (например "Скопировано: ...") */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%) translateY(20px);
+  background: #2a1414;
+  color: #f0c674;
+  border: 2px solid #8a1a1a;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 999;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
