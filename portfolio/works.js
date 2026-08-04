@@ -9,6 +9,15 @@
 const WORKS = [
   // ===== Best =====
   { category: "Best", file: "assets/Best/DW95jL.png", thumb: "thumbs/Best/DW95jL.jpg", title: "" },
+  { category: "Best", file: "assets/Video/Something’s Buzzing Inside NECK...🐝☠️.mp4", thumb: "thumbs/Video/Something’s Buzzing Inside NECK...🐝☠️.jpg", title: "" },
+  { category: "Best", file: "assets/Video/The Science of Toxins_ A fatal drop.....💧☠️.mp4", thumb: "thumbs/Video/The Science of Toxins_ A fatal drop.....💧☠️.jpg", title: "" },
+  { category: "Best", file: "assets/Video/1121(2).mp4", thumb: "thumbs/Video/1121(2).jpg", title: "" },
+  { category: "Best", file: "assets/Video/A terrible tragedy happened because of this.mp4", thumb: "thumbs/Video/A terrible tragedy happened because of this.jpg", title: "" },
+  { category: "Best", file: "assets/Video/He Have Eggs Inside...🪱🥚.mp4", thumb: "thumbs/Video/He Have Eggs Inside...🪱🥚.jpg", title: "" },
+  { category: "Best", file: "assets/Video/He Dead - Fangs Already In...🤢🦷.mp4", thumb: "thumbs/Video/He Dead - Fangs Already In...🤢🦷.jpg", title: "" },
+  { category: "Best", file: "assets/Video/d.mp4", thumb: "thumbs/Video/d.jpg", title: "" },
+  { category: "Best", file: "assets/Video/a.mp4", thumb: "thumbs/Video/a.jpg", title: "" },
+  { category: "Best", file: "assets/Video/He wants to kill you and he's following you everywhere..mp4", thumb: "thumbs/Video/He wants to kill you and he's following you everywhere..jpg", title: "" },
   { category: "Best", file: "assets/Best/r.mp4", thumb: "thumbs/Best/r.jpg", title: "" },
   { category: "Best", file: "assets/Best/houses2.gif", thumb: "thumbs/Best/houses2.jpg", title: "" },
   { category: "Best", file: "assets/screenshots/zFchve9oU3Rl_rzgP3NkLqQKvCJEhM3HsF64XPRNzRtD6I8be_dM8Iu_4kuY8USq3Oq_8i5cAG2gep6-nmlMau4G.jpg", thumb: "thumbs/screenshots/zFchve9oU3Rl_rzgP3NkLqQKvCJEhM3HsF64XPRNzRtD6I8be_dM8Iu_4kuY8USq3Oq_8i5cAG2gep6-nmlMau4G.jpg", title: "" },
