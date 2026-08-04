@@ -64,16 +64,20 @@ function buildGallery() {
       img.loading = "lazy";
       img.draggable = false;
 
+      const frame = document.createElement("div");
+      frame.className = "thumb-frame";
+      frame.appendChild(img);
+
       // Маленькая иконка "▶" поверх превью, если это видео/гифка —
       // чтобы было понятно, что по клику откроется анимация
       if (isVideoFile(work.file) || /\.gif$/i.test(work.file)) {
         const badge = document.createElement("span");
         badge.className = "play-badge";
         badge.textContent = "▶";
-        figure.appendChild(badge);
+        frame.appendChild(badge);
       }
 
-      figure.appendChild(img);
+      figure.appendChild(frame);
 
       if (work.title) {
         const caption = document.createElement("figcaption");
