@@ -93,33 +93,44 @@ body {
 /* ===== Сетка карточек ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
-  padding-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 22px;
+  padding-top: 20px;
 }
 
 .card {
   position: relative;
-  background: #2a1414;
-  border: 2px solid #6b3f14;
-  border-radius: 6px;
+  background: linear-gradient(160deg, #331c1c, #24130f);
+  border: 1px solid #6b3f14;
+  border-radius: 10px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   cursor: pointer; /* подсказывает, что можно кликнуть и увеличить */
-  transition: transform 0.15s, border-color 0.15s;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .card:hover {
-  transform: scale(1.03);
+  transform: translateY(-5px);
   border-color: #f0c674;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(240, 198, 116, 0.25);
+}
+
+/* Рамка вокруг самой картинки — чуть светлее чистого чёрного и с еле заметным
+   свечением по краю, чтобы работы с чёрным фоном не "терялись" на карточке */
+.card .thumb-frame {
+  position: relative;
+  padding: 10px;
+  background: radial-gradient(circle at 50% 35%, #2a1c17, #180f0c 75%);
+  box-shadow: inset 0 0 0 1px rgba(240, 198, 116, 0.08);
 }
 
 .card img {
   width: 100%;
   height: 180px;
   object-fit: contain; /* показывает картинку целиком, без обрезки, даже если пропорции разные */
-  background: #14090a;
+  border-radius: 4px;
   image-rendering: pixelated; /* чёткие пиксели без размытия при масштабировании */
   -webkit-user-drag: none;
   pointer-events: none; /* клик всегда попадает на .card */
@@ -128,10 +139,11 @@ body {
 /* Значок "▶" поверх превью гифок/видео — подсказывает, что там анимация */
 .play-badge {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 14px;
+  right: 14px;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(240, 198, 116, 0.4);
   color: #f0c674;
   font-size: 11px;
   padding: 3px 6px;
@@ -140,10 +152,11 @@ body {
 }
 
 .card figcaption {
-  padding: 8px;
+  padding: 10px 8px;
   font-size: 11px;
   text-align: center;
   color: #cbb89a;
+  border-top: 1px solid rgba(107, 63, 20, 0.5);
 }
 
 /* ===== Лайтбокс — увеличенный просмотр по клику ===== */
