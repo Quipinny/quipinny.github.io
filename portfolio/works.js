@@ -178,8 +178,7 @@ const WORKS = [
   { category: "Video", file: "assets/Video/A terrible tragedy happened because of this.mp4", thumb: "thumbs/Video/A terrible tragedy happened because of this.jpg", title: "" },
   { category: "Video", file: "assets/Video/He Have Eggs Inside...🪱🥚.mp4", thumb: "thumbs/Video/He Have Eggs Inside...🪱🥚.jpg", title: "" },
   { category: "Video", file: "assets/Video/He Dead - Fangs Already In...🤢🦷.mp4", thumb: "thumbs/Video/He Dead - Fangs Already In...🤢🦷.jpg", title: "" },
-  { category: "Video", file: "assets/Video/This small creatures will kill you... #horrortok #pixelart #horror.mp4", thumb: "thumbs/Video/This small creatures will kill you... #horrortok #pixelart #horror.jpg", title: "" },
-  { category: "Video", file: "assets/Video/True Detective was killed by this... #horror #music #kryptid.mp4", thumb: "thumbs/Video/True Detective was killed by this... #horror #music #kryptid.jpg", title: "" },
+  { category: "Video", file: "assets/Video/a.mp4", thumb: "thumbs/Video/a.jpg", title: "" },
   { category: "Video", file: "assets/Video/He wants to kill you and he's following you everywhere..mp4", thumb: "thumbs/Video/He wants to kill you and he's following you everywhere..jpg", title: "" },
   
   // ===== Screenshots =====
