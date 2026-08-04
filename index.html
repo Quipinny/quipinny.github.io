@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="style.css?v=15" rel="stylesheet"/>
+<link href="style.css?v=16" rel="stylesheet"/>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Person",
@@ -41,15 +41,17 @@
 <li>Game-Ready Assets</li>
 <li>Flexible Workflow</li>
 </ul>
+<!-- Цена временно скрыта по просьбе — верни строки ниже, когда понадобится:
 <p class="txt-title txt-pricing">Pricing</p>
 <p class="txt-price">$9/hour</p>
+-->
 </div>
 <!-- Текстовый блок в белой "речевой" облачке над кошкой -->
 <div class="text-box text-bubble">
 <p>Hi! I'm a freelance pixel artist with 6+ years of experience creating characters, environments, and animations for indie games. Let's build something awesome together!</p>
 </div>
-<!-- Кнопка HIRE — открывает почту -->
-<a aria-label="Написать на почту" class="btn-video btn-hire" href="mailto:quipinny@gmail.com" onclick="playBtn(event, this)">
+<!-- Кнопка HIRE — копирует почту в буфер обмена (вместо ненадёжного mailto) -->
+<a aria-label="Скопировать почту" class="btn-video btn-hire" href="mailto:quipinny@gmail.com" onclick="playBtn(event, this)">
 <img alt="Hire Me" class="btn-static" src="button1_static.png"/>
 <img alt="Hire Me" class="btn-gif" src="button1.gif"/>
 </a>
@@ -168,16 +170,46 @@
       setTimeout(() => {
         const href = link.getAttribute('href');
         const target = link.getAttribute('target');
-        if (target === '_blank') {
+
+        if (href.startsWith('mailto:')) {
+          // Почта — не переходим никуда (mailto ненадёжен, у многих просто
+          // не настроена почтовая программа), а копируем адрес в буфер обмена
+          const email = href.replace('mailto:', '');
+          navigator.clipboard.writeText(email).then(() => {
+            showToast('Скопировано: ' + email);
+          }).catch(() => {
+            // Если буфер обмена недоступен (редко, старые браузеры) — fallback на mailto
+            window.location.href = href;
+          });
+        } else if (target === '_blank') {
           window.open(href, '_blank');
         } else {
           window.location.href = href;
         }
+
         // Возвращаем статичную картинку обратно на всякий случай
         // (если ссылка открылась в новой вкладке, а эта страница осталась открыта)
         newGif.style.display = 'none';
         stat.style.display = 'block';
       }, ANIMATION_DURATION);
+    }
+
+    // Небольшое всплывающее уведомление снизу экрана (например "Скопировано")
+    let toastTimer = null;
+    function showToast(text) {
+      let toast = document.getElementById('toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = text;
+      toast.classList.add('is-visible');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('is-visible');
+      }, 2200);
     }
   </script>
 </body>
