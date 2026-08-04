@@ -172,7 +172,7 @@ const WORKS = [
     // ВНИМАНИЕ: папки assets/Video/ пока НЕТ на GitHub — создай её и залей туда
     // эти файлы, иначе эта категория продолжит быть пустой (404 на все видео).
   { category: "Video", file: "assets/Video/Something’s Buzzing Inside NECK...🐝☠️.mp4", thumb: "thumbs/Video/Something’s Buzzing Inside NECK...🐝☠️.jpg", title: "" },
-  { category: "Video", file: "assets/Video/This creature shouldn’t exist  #horrortok #pixelart #horror #analoguehorror.mp4", thumb: "thumbs/Video/This creature shouldn’t exist  #horrortok #pixelart #horror #analoguehorror.jpg", title: "" },
+  { category: "Video", file: "assets/Best/r.mp4", thumb: "thumbs/Best/r.jpg", title: "" },
   { category: "Video", file: "assets/Video/The Science of Toxins_ A fatal drop.....💧☠️.mp4", thumb: "thumbs/Video/The Science of Toxins_ A fatal drop.....💧☠️.jpg", title: "" },
   { category: "Video", file: "assets/Video/1121(2).mp4", thumb: "thumbs/Video/1121(2).jpg", title: "" },
   { category: "Video", file: "assets/Video/A terrible tragedy happened because of this.mp4", thumb: "thumbs/Video/A terrible tragedy happened because of this.jpg", title: "" },
@@ -180,7 +180,6 @@ const WORKS = [
   { category: "Video", file: "assets/Video/He Dead - Fangs Already In...🤢🦷.mp4", thumb: "thumbs/Video/He Dead - Fangs Already In...🤢🦷.jpg", title: "" },
   { category: "Video", file: "assets/Video/This small creatures will kill you... #horrortok #pixelart #horror.mp4", thumb: "thumbs/Video/This small creatures will kill you... #horrortok #pixelart #horror.jpg", title: "" },
   { category: "Video", file: "assets/Video/True Detective was killed by this... #horror #music #kryptid.mp4", thumb: "thumbs/Video/True Detective was killed by this... #horror #music #kryptid.jpg", title: "" },
-  { category: "Video", file: "assets/Video/v.gif", thumb: "thumbs/Video/v.jpg", title: "" },
   { category: "Video", file: "assets/Video/He wants to kill you and he's following you everywhere..mp4", thumb: "thumbs/Video/He wants to kill you and he's following you everywhere..jpg", title: "" },
   
   // ===== Screenshots =====
