@@ -15,7 +15,7 @@ const PROJECTS = [
   {
     title: "Название проекта 1",
     tagline: "Одна строка о том, что это за проект",
-    cover: "assets/Best/Снимок.png",
+    cover: "assets/Best/1234.png",
     description: "Полное описание проекта — сколько угодно текста. Что делал, для кого, какие были задачи, что получилось в итоге.",
     tags: ["Pixel Art", "Game Assets"],
     gallery: [],
