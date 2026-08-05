@@ -147,7 +147,7 @@ function closeLightbox() {
 // ===== Избранные проекты — карточки-"билеты" вверху страницы =====
 function renderFeatured() {
   const grid = document.getElementById("featuredGrid");
-  if (!window.PROJECTS) return; // если projects.js не подключён — просто пропускаем блок
+  if (typeof PROJECTS === "undefined") return; // если projects.js не подключён — просто пропускаем блок
 
   PROJECTS.forEach((project) => {
     const card = document.createElement("div");
