@@ -98,20 +98,21 @@ body {
 
 /* ===== Сетка карточек ===== */
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 22px;
+  column-width: 220px; /* колонки подбираются под ширину экрана автоматически */
+  column-gap: 22px;
   padding-top: 20px;
 }
 
 .card {
   position: relative;
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 22px;
+  break-inside: avoid; /* карточка не разрывается между колонками */
   background: linear-gradient(160deg, #331c1c, #24130f);
   border: 1px solid #6b3f14;
   border-radius: 10px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   cursor: pointer; /* подсказывает, что можно кликнуть и увеличить */
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -135,9 +136,10 @@ body {
 }
 
 .card img {
+  display: block;
   width: 100%;
-  height: 210px;
-  object-fit: contain; /* показывает картинку целиком, без обрезки, даже если пропорции разные */
+  height: auto; /* высота идёт от реальных пропорций картинки — рамка облегает её вплотную */
+  object-fit: initial;
   border-radius: 4px;
   outline: 1px solid rgba(240, 198, 116, 0.18); /* видимая граница кадра поверх картинки */
   outline-offset: -1px;
@@ -163,6 +165,10 @@ body {
   border: 1px dashed #6b3f14;
   border-radius: 6px;
   margin: 4px;
+}
+
+.card .thumb-frame.is-broken {
+  min-height: 140px; /* чтобы подписи "нет превью" было где поместиться без картинки */
 }
 
 /* Значок "▶" поверх превью гифок/видео — подсказывает, что там анимация */
@@ -232,11 +238,11 @@ body {
 /* На маленьких экранах — карточки чуть меньше, навигация компактнее */
 @media (max-width: 600px) {
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 10px;
+    column-width: 130px;
+    column-gap: 10px;
   }
-  .card img {
-    height: 130px;
+  .card {
+    margin-bottom: 10px;
   }
   .topnav {
     padding: 8px 14px;
@@ -552,38 +558,24 @@ body {
 }
 
 /* ============================================================
-   "РВАНАЯ" СЕТКА РАБОТ — часть карточек крупнее остальных,
-   чисто на CSS, работы в works.js трогать не нужно
-   ============================================================ */
-.grid {
-  grid-auto-rows: 10px;
-}
+   Раньше здесь была grid-сетка с фиксированной высотой карточек —
+   из-за неё рамка была намного больше самого превью. Теперь сетка
+   "masonry" (колонки): высота каждой карточки идёт от реальных
+   пропорций её картинки — рамка облегает превью без пустых полей,
+   а разброс размеров получается сам собой из разных пропорций работ.
 
-.grid .card {
-  grid-row: span 19; /* высота обычной карточки (180px превью + подпись) в рядах по 10px */
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.grid .card .thumb-frame {
-  flex: 1;
-}
-
-.grid .card .thumb-frame img {
-  height: 100%;
-}
-
-/* Каждая 7-я карточка — крупнее, в 2 колонки и в 2 раза выше */
+   Ниже — отдельный акцент: каждая 7-я карточка занимает всю ширину
+   ряда (крупнее остальных специально, для разнообразия), но её
+   картинка внутри так же облегается по своим пропорциям, без
+   пустого "воздуха" вокруг. */
 .grid .card:nth-child(7n+1) {
-  grid-column: span 2;
-  grid-row: span 30;
+  column-span: all;
+  max-width: 480px; /* не растягиваем на всю ширину экрана, просто заметно крупнее */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @media (max-width: 700px) {
-  .grid .card:nth-child(7n+1) {
-    grid-column: span 1; /* на телефоне крупные карточки не растягиваем по ширине — некуда */
-  }
   .hero-title {
     font-size: 48px;
   }
@@ -591,3 +583,4 @@ body {
     gap: 24px;
   }
 }
+

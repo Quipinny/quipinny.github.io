@@ -68,13 +68,22 @@ function buildGallery() {
       frame.className = "thumb-frame";
       frame.appendChild(img);
 
-      // Если путь к превью битый — картинка не появится сама по себе,
-      // а карточка будет выглядеть просто пустой. Ловим это и явно
-      // показываем "нет превью", чтобы сразу было видно, что чинить.
+      // Если thumb (заранее сохранённое превью) не нашёлся на сервере —
+      // карточка не остаётся пустой: пробуем показать сам оригинальный
+      // файл (gif/png). Видео так показать нельзя (img не проигрывает mp4),
+      // поэтому для видео без превью просто помечаем "нет превью".
+      let triedFallback = false;
       img.onerror = () => {
+        const canFallbackToFile =
+          !triedFallback && work.thumb && !isVideoFile(work.file) && img.src.indexOf(work.file) === -1;
+        if (canFallbackToFile) {
+          triedFallback = true;
+          img.src = work.file;
+          return;
+        }
         img.style.display = "none";
         frame.classList.add("is-broken");
-        console.warn("Не загрузилось превью:", img.src, work);
+        console.warn("Не загрузилось превью (и оригинал тоже):", work);
       };
 
       // Маленькая иконка "▶" поверх превью, если это видео/гифка —
