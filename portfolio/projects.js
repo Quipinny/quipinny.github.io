@@ -13,17 +13,7 @@
 
 const PROJECTS = [
   {
-    title: "Название проекта 1",
-    tagline: "Одна строка о том, что это за проект",
-    cover: "assets/Best/DW95jL.png",
-    description: "Полное описание проекта — сколько угодно текста. Что делал, для кого, какие были задачи, что получилось в итоге.",
-    tags: ["Pixel Art", "Game Assets"],
-    gallery: [],
-    link: "https://quipinny.itch.io/",
-    linkLabel: "Смотреть на itch.io",
-  },
-  {
-    title: "Название проекта 2",
+      title: "Название проекта 2",
     tagline: "Одна строка о том, что это за проект",
     cover: "assets/Best/4qeoB_.png",
     description: "Полное описание проекта — сколько угодно текста.",
@@ -31,6 +21,20 @@ const PROJECTS = [
     gallery: [],
     link: "",
     linkLabel: "",
+  },
+  {
+    title: "Beat Paws Odyssey",
+    tagline: "Pixel art idle game that accompanies you at work.",
+    cover: "assets/Best/1234.png",
+    description: "A large-scale project where I served as the lead pixel artist, creating nearly all of the game's visual assets, including characters, environments, and background art.",
+    gallery: [/assets/Best/12.PNG],
+    description: "I was responsible for designing the characters, creating their animations, designing their outfits, developing the UI, and producing most of the game's visual assets. My work also included environments, backgrounds, icons, and various interface elements.",
+    gallery: [/assets/Best/3 (2).png, /assets/Best/buttons.png],
+    tags: ["Pixel Art", "Game Assets"],
+    
+    gallery: [],
+    link: "https://quipinny.itch.io/",
+    linkLabel: "Смотреть на itch.io",
   },
   {
     title: "Название проекта 3",
