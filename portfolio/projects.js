@@ -13,14 +13,14 @@
 
 const PROJECTS = [
   {
-      title: "Название проекта 2",
-    tagline: "Одна строка о том, что это за проект",
-    cover: "assets/Best/4qeoB_.png",
-    description: "Полное описание проекта — сколько угодно текста.",
-    tags: ["Animation", "Characters"],
-    gallery: [],
-    link: "",
-    linkLabel: "",
+      title: "Big Pixel Art Fish Pack",
+    tagline: "A pixel art asset pack for game development.",
+    cover: "assets/Best/ww.PNG",
+    description: "A successful commercial pixel art asset pack featuring over 500 fish sprites, ranging from real-world species to original fantasy creatures of my own design. The asset pack was created and published by me on my itch.io page, where it has received several thousand views and hundreds of downloads. The collection includes a wide variety of fish, from realistic aquatic species to unique fantasy designs, making it suitable for games across multiple genres.",
+    tags: ["Icons", "Game Assets"],
+    gallery: ["assets/Best/aaaaa.PNG", "portfolio/assets/Best/asq.png", "portfolio/assets/Best/qwer.png"],
+    link: "https://quipinny.itch.io/very-big-fish-pack",
+    linkLabel: "Look at itch.io",
   },
   {
     title: "Beat Paws Odyssey",
@@ -32,7 +32,7 @@ const PROJECTS = [
     
     gallery: [],
     link: "https://quipinny.itch.io/",
-    linkLabel: "Смотреть на itch.io",
+    linkLabel: "Look at itch.io",
   },
   {
     title: "Название проекта 3",
