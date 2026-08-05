@@ -27,9 +27,7 @@ const PROJECTS = [
     tagline: "Pixel art idle game that accompanies you at work.",
     cover: "assets/Best/1234.png",
     description: "A large-scale project where I served as the lead pixel artist, creating nearly all of the game's visual assets, including characters, environments, and background art.",
-    gallery: ["/assets/Best/12.PNG"],
-    description: "I was responsible for designing the characters, creating their animations, designing their outfits, developing the UI, and producing most of the game's visual assets. My work also included environments, backgrounds, icons, and various interface elements.",
-    gallery: ["/assets/Best/3 (2).png", "/assets/Best/buttons.png"],
+    gallery: ["/assets/Best/12.PNG", "/assets/Best/3 (2).png", "/assets/Best/buttons.png"],
     tags: ["Pixel Art", "Game Assets"],
     
     gallery: [],
