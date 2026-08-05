@@ -1,0 +1,586 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* Бесконечный тайловый паттерн из background2.png (328x1080px, вертикальные полосы) */
+  background-image: url("background2.png");
+  background-repeat: repeat;
+  background-size: 328px 1080px; /* родной размер картинки — чтобы плитки стыковались без швов */
+  color: #f0e6d2;
+  font-family: 'Space Mono', monospace; /* читаемый шрифт для текста — Silkscreen только для крупных заголовков */
+  font-weight: 400;
+  line-height: 1.6;
+  /* Защита от копирования текста/долгого тапа на телефоне (см. общее примечание внизу файла) */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.font-display {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+}
+
+/* ===== Верхняя навигация — липкая, всегда видна при скролле ===== */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 20px;
+  background: #2a1414;
+  border-bottom: 3px solid #8a1a1a;
+}
+
+.topnav-logo {
+  display: block;
+}
+
+.topnav-logo img {
+  height: 40px;
+  width: auto;
+  display: block;
+  -webkit-user-drag: none; /* нельзя перетащить картинку мышкой, чтобы сохранить */
+}
+
+.topnav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topnav-links a {
+  color: #f0e6d2;
+  text-decoration: none;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 2px solid #6b3f14;
+  border-radius: 4px;
+  background: #3a1f1f;
+  transition: 0.15s;
+}
+
+.topnav-links a:hover {
+  background: #8a1a1a;
+  border-color: #f0c674;
+}
+
+/* ===== Секции категорий ===== */
+.category-section {
+  padding: 0 20px 40px;
+  scroll-margin-top: 70px; /* чтобы при переходе по ссылке заголовок не прятался под топ-навигацию */
+}
+
+/* Липкий заголовок секции — прилипает под топ-навигацией, пока листаешь эту категорию */
+.section-title {
+  position: sticky;
+  top: 58px; /* высота топ-навигации */
+  z-index: 50;
+  background: #1a0f0f;
+  padding: 16px 0 10px;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 20px;
+  color: #f0c674;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid #6b3f14;
+}
+
+/* ===== Сетка карточек ===== */
+.grid {
+  column-width: 220px; /* колонки подбираются под ширину экрана автоматически */
+  column-gap: 22px;
+  padding-top: 20px;
+}
+
+.card {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 22px;
+  break-inside: avoid; /* карточка не разрывается между колонками */
+  background: linear-gradient(160deg, #331c1c, #24130f);
+  border: 1px solid #6b3f14;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer; /* подсказывает, что можно кликнуть и увеличить */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: #f0c674;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(240, 198, 116, 0.25);
+}
+
+/* Рамка вокруг самой картинки — чуть светлее чистого чёрного и с еле заметным
+   свечением по краю, чтобы работы с чёрным фоном не "терялись" на карточке.
+   Тонкая рамка (1px) внутри задаёт видимую границу кадра — так даже
+   картинки с собственным чёрным фоном не сливаются с подложкой. */
+.card .thumb-frame {
+  position: relative;
+  padding: 6px;
+  background: radial-gradient(circle at 50% 35%, #46352c, #2c211b 75%);
+  box-shadow: inset 0 0 0 1px rgba(240, 198, 116, 0.12);
+}
+
+.card img {
+  display: block;
+  width: 100%;
+  height: auto; /* высота идёт от реальных пропорций картинки — рамка облегает её вплотную */
+  object-fit: initial;
+  border-radius: 4px;
+  outline: 1px solid rgba(240, 198, 116, 0.18); /* видимая граница кадра поверх картинки */
+  outline-offset: -1px;
+  image-rendering: pixelated; /* чёткие пиксели без размытия при масштабировании */
+  -webkit-user-drag: none;
+  pointer-events: none; /* клик всегда попадает на .card */
+}
+
+/* Если картинка не загрузилась (битый путь) — вместо пустоты показываем
+   явную подпись, чтобы сразу было видно, что тут не так, а не "ничего нет" */
+.card .thumb-frame.is-broken::after,
+.ticket-cover.is-broken::after {
+  content: "нет превью";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: #8a7360;
+  border: 1px dashed #6b3f14;
+  border-radius: 6px;
+  margin: 4px;
+}
+
+.card .thumb-frame.is-broken {
+  min-height: 140px; /* чтобы подписи "нет превью" было где поместиться без картинки */
+}
+
+/* Значок "▶" поверх превью гифок/видео — подсказывает, что там анимация */
+.play-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(240, 198, 116, 0.4);
+  color: #f0c674;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.card figcaption {
+  padding: 10px 8px;
+  font-size: 11px;
+  text-align: center;
+  color: #cbb89a;
+  border-top: 1px solid rgba(107, 63, 20, 0.5);
+}
+
+/* ===== Лайтбокс — увеличенный просмотр по клику ===== */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 5, 0.92);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  cursor: zoom-out;
+}
+
+.lightbox.is-open {
+  display: flex;
+}
+
+.lightbox-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: default;
+  /* Светлая подложка-паспарту под самой работой — чтобы чёрные части
+     персонажей (руки, ноги, одежда) не терялись на тёмном фоне лайтбокса */
+  background: #4a3a30;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-content img,
+.lightbox-content video {
+  max-width: 86vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  image-rendering: pixelated;
+  border-radius: 4px;
+  -webkit-user-drag: none;
+  display: block;
+}
+
+/* На маленьких экранах — карточки чуть меньше, навигация компактнее */
+@media (max-width: 600px) {
+  .grid {
+    column-width: 130px;
+    column-gap: 10px;
+  }
+  .card {
+    margin-bottom: 10px;
+  }
+  .topnav {
+    padding: 8px 14px;
+  }
+  .topnav-logo img {
+    height: 30px;
+  }
+}
+
+/* ============================================================
+   ШАПКА (HERO)
+   ============================================================ */
+.hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 24px 50px;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #d99a4e;
+  margin-bottom: 14px;
+}
+
+.hero-title {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: clamp(40px, 9vw, 84px);
+  color: #f0c674;
+  text-shadow: 3px 3px 0 #6b1414, 0 0 40px rgba(240, 198, 116, 0.25);
+  letter-spacing: 0.04em;
+  margin-bottom: 18px;
+}
+
+.hero-tagline {
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  color: #cbb89a;
+  max-width: 560px;
+  margin: 0 auto 34px;
+  line-height: 1.7;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-num {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 28px;
+  color: #f0c674;
+}
+
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8a7360;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   ИЗБРАННЫЕ ПРОЕКТЫ — карточки-"билеты"
+   ============================================================ */
+.featured {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px 60px;
+  scroll-margin-top: 70px;
+}
+
+.section-title-main {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 22px;
+  color: #f0c674;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.ticket-card {
+  background: linear-gradient(165deg, #3a2018, #24140f);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #6b3f14;
+}
+
+.ticket-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(240, 198, 116, 0.3);
+}
+
+.ticket-cover {
+  position: relative;
+  height: 220px;
+  background: radial-gradient(circle at 50% 35%, #46352c, #241813 75%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.ticket-cover img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  outline: 1px solid rgba(240, 198, 116, 0.18);
+  outline-offset: -1px;
+  image-rendering: pixelated;
+  -webkit-user-drag: none;
+}
+
+/* Перфорация "билета" — имитация линии отрыва между обложкой и описанием */
+.ticket-tear {
+  position: relative;
+  height: 0;
+  border-top: 2px dashed #6b3f14;
+  margin: 0 16px;
+}
+
+.ticket-tear::before,
+.ticket-tear::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  background: #150d0d; /* цвет фона страницы — создаёт вырез-полукруг */
+  border-radius: 50%;
+}
+
+.ticket-tear::before { left: -25px; }
+.ticket-tear::after { right: -25px; }
+
+.ticket-info {
+  padding: 18px 20px 22px;
+}
+
+.ticket-info h3 {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 17px;
+  color: #f0e6d2;
+  margin-bottom: 8px;
+}
+
+.ticket-info p {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #cbb89a;
+  line-height: 1.5;
+}
+
+.ticket-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.ticket-tags span {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #d99a4e;
+  border: 1px solid rgba(217, 154, 78, 0.4);
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+
+/* ============================================================
+   МОДАЛКА ПРОЕКТА — полная информация по клику на билет
+   ============================================================ */
+.project-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 4, 4, 0.92);
+  z-index: 1000;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  cursor: zoom-out;
+}
+
+.project-modal.is-open {
+  display: flex;
+}
+
+.project-modal-content {
+  position: relative;
+  background: linear-gradient(165deg, #3a2018, #24140f);
+  border: 1px solid #6b3f14;
+  border-radius: 12px;
+  max-width: 760px;
+  width: 100%;
+  padding: 40px;
+  cursor: default;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+}
+
+.project-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #6b3f14;
+  background: #24140f;
+  color: #f0c674;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.project-cover {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  background: radial-gradient(circle at 50% 35%, #46352c, #241813 75%);
+  border-radius: 8px;
+  image-rendering: pixelated;
+  -webkit-user-drag: none;
+  margin-bottom: 24px;
+}
+
+.project-modal-content h2 {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 24px;
+  color: #f0c674;
+  margin-bottom: 8px;
+}
+
+.project-tagline {
+  font-family: 'Space Mono', monospace;
+  color: #d99a4e;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.project-desc {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #e5d9c3;
+  margin: 16px 0;
+  white-space: pre-line;
+}
+
+.project-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.project-gallery img {
+  width: 100%;
+  height: 110px;
+  object-fit: contain;
+  background: #1c1210;
+  border-radius: 6px;
+  image-rendering: pixelated;
+  -webkit-user-drag: none;
+}
+
+.project-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  color: #150d0d;
+  background: #f0c674;
+  padding: 12px 22px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+
+.project-link:hover {
+  transform: scale(1.05);
+}
+
+/* ============================================================
+   Раньше здесь была grid-сетка с фиксированной высотой карточек —
+   из-за неё рамка была намного больше самого превью. Теперь сетка
+   "masonry" (колонки): высота каждой карточки идёт от реальных
+   пропорций её картинки — рамка облегает превью без пустых полей,
+   а разброс размеров получается сам собой из разных пропорций работ.
+
+   Ниже — отдельный акцент: каждая 7-я карточка занимает всю ширину
+   ряда (крупнее остальных специально, для разнообразия), но её
+   картинка внутри так же облегается по своим пропорциям, без
+   пустого "воздуха" вокруг. */
+.grid .card:nth-child(7n+1) {
+  column-span: all;
+  max-width: 480px; /* не растягиваем на всю ширину экрана, просто заметно крупнее */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 700px) {
+  .hero-title {
+    font-size: 48px;
+  }
+  .hero-stats {
+    gap: 24px;
+  }
+}
+
