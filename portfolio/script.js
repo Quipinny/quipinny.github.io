@@ -126,4 +126,129 @@ function closeLightbox() {
   document.getElementById("lightboxContent").innerHTML = ""; // останавливает видео
 }
 
+// ===== Избранные проекты — карточки-"билеты" вверху страницы =====
+function renderFeatured() {
+  const grid = document.getElementById("featuredGrid");
+  if (!window.PROJECTS) return; // если projects.js не подключён — просто пропускаем блок
+
+  PROJECTS.forEach((project) => {
+    const card = document.createElement("div");
+    card.className = "ticket-card";
+    card.onclick = () => openProject(project);
+
+    const cover = document.createElement("div");
+    cover.className = "ticket-cover";
+    const img = document.createElement("img");
+    img.src = project.cover;
+    img.alt = project.title;
+    img.loading = "lazy";
+    img.draggable = false;
+    cover.appendChild(img);
+
+    const tear = document.createElement("div");
+    tear.className = "ticket-tear";
+
+    const info = document.createElement("div");
+    info.className = "ticket-info";
+
+    const title = document.createElement("h3");
+    title.textContent = project.title;
+
+    const tagline = document.createElement("p");
+    tagline.textContent = project.tagline;
+
+    info.appendChild(title);
+    info.appendChild(tagline);
+
+    if (project.tags && project.tags.length) {
+      const tags = document.createElement("div");
+      tags.className = "ticket-tags";
+      project.tags.forEach((t) => {
+        const tag = document.createElement("span");
+        tag.textContent = t;
+        tags.appendChild(tag);
+      });
+      info.appendChild(tags);
+    }
+
+    card.appendChild(cover);
+    card.appendChild(tear);
+    card.appendChild(info);
+    grid.appendChild(card);
+  });
+}
+
+function openProject(project) {
+  const content = document.getElementById("projectModalContent");
+  content.innerHTML = "";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "project-close";
+  closeBtn.textContent = "×";
+  closeBtn.onclick = closeProject;
+  content.appendChild(closeBtn);
+
+  const cover = document.createElement("img");
+  cover.className = "project-cover";
+  cover.src = project.cover;
+  cover.alt = project.title;
+  cover.draggable = false;
+  content.appendChild(cover);
+
+  const title = document.createElement("h2");
+  title.textContent = project.title;
+  content.appendChild(title);
+
+  const tagline = document.createElement("p");
+  tagline.className = "project-tagline";
+  tagline.textContent = project.tagline;
+  content.appendChild(tagline);
+
+  if (project.tags && project.tags.length) {
+    const tags = document.createElement("div");
+    tags.className = "ticket-tags";
+    project.tags.forEach((t) => {
+      const tag = document.createElement("span");
+      tag.textContent = t;
+      tags.appendChild(tag);
+    });
+    content.appendChild(tags);
+  }
+
+  const desc = document.createElement("p");
+  desc.className = "project-desc";
+  desc.textContent = project.description;
+  content.appendChild(desc);
+
+  if (project.gallery && project.gallery.length) {
+    const gal = document.createElement("div");
+    gal.className = "project-gallery";
+    project.gallery.forEach((src) => {
+      const im = document.createElement("img");
+      im.src = src;
+      im.loading = "lazy";
+      im.draggable = false;
+      gal.appendChild(im);
+    });
+    content.appendChild(gal);
+  }
+
+  if (project.link) {
+    const link = document.createElement("a");
+    link.className = "project-link";
+    link.href = project.link;
+    link.target = "_blank";
+    link.textContent = project.linkLabel || "View project";
+    content.appendChild(link);
+  }
+
+  document.getElementById("projectModal").classList.add("is-open");
+}
+
+function closeProject() {
+  document.getElementById("projectModal").classList.remove("is-open");
+}
+
+renderFeatured();
+
 buildGallery();
