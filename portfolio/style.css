@@ -124,22 +124,45 @@ body {
 }
 
 /* Рамка вокруг самой картинки — чуть светлее чистого чёрного и с еле заметным
-   свечением по краю, чтобы работы с чёрным фоном не "терялись" на карточке */
+   свечением по краю, чтобы работы с чёрным фоном не "терялись" на карточке.
+   Тонкая рамка (1px) внутри задаёт видимую границу кадра — так даже
+   картинки с собственным чёрным фоном не сливаются с подложкой. */
 .card .thumb-frame {
   position: relative;
-  padding: 10px;
+  padding: 6px;
   background: radial-gradient(circle at 50% 35%, #46352c, #2c211b 75%);
   box-shadow: inset 0 0 0 1px rgba(240, 198, 116, 0.12);
 }
 
 .card img {
   width: 100%;
-  height: 180px;
+  height: 210px;
   object-fit: contain; /* показывает картинку целиком, без обрезки, даже если пропорции разные */
   border-radius: 4px;
+  outline: 1px solid rgba(240, 198, 116, 0.18); /* видимая граница кадра поверх картинки */
+  outline-offset: -1px;
   image-rendering: pixelated; /* чёткие пиксели без размытия при масштабировании */
   -webkit-user-drag: none;
   pointer-events: none; /* клик всегда попадает на .card */
+}
+
+/* Если картинка не загрузилась (битый путь) — вместо пустоты показываем
+   явную подпись, чтобы сразу было видно, что тут не так, а не "ничего нет" */
+.card .thumb-frame.is-broken::after,
+.ticket-cover.is-broken::after {
+  content: "нет превью";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: #8a7360;
+  border: 1px dashed #6b3f14;
+  border-radius: 6px;
+  margin: 4px;
 }
 
 /* Значок "▶" поверх превью гифок/видео — подсказывает, что там анимация */
@@ -333,18 +356,21 @@ body {
 }
 
 .ticket-cover {
-  height: 190px;
+  position: relative;
+  height: 220px;
   background: radial-gradient(circle at 50% 35%, #46352c, #241813 75%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px;
+  padding: 8px;
 }
 
 .ticket-cover img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  outline: 1px solid rgba(240, 198, 116, 0.18);
+  outline-offset: -1px;
   image-rendering: pixelated;
   -webkit-user-drag: none;
 }

@@ -68,6 +68,15 @@ function buildGallery() {
       frame.className = "thumb-frame";
       frame.appendChild(img);
 
+      // Если путь к превью битый — картинка не появится сама по себе,
+      // а карточка будет выглядеть просто пустой. Ловим это и явно
+      // показываем "нет превью", чтобы сразу было видно, что чинить.
+      img.onerror = () => {
+        img.style.display = "none";
+        frame.classList.add("is-broken");
+        console.warn("Не загрузилось превью:", img.src, work);
+      };
+
       // Маленькая иконка "▶" поверх превью, если это видео/гифка —
       // чтобы было понятно, что по клику откроется анимация
       if (isVideoFile(work.file) || /\.gif$/i.test(work.file)) {
@@ -143,6 +152,11 @@ function renderFeatured() {
     img.alt = project.title;
     img.loading = "lazy";
     img.draggable = false;
+    img.onerror = () => {
+      img.style.display = "none";
+      cover.classList.add("is-broken");
+      console.warn("Не загрузилась обложка проекта:", img.src, project);
+    };
     cover.appendChild(img);
 
     const tear = document.createElement("div");
