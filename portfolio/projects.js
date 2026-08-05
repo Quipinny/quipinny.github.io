@@ -25,7 +25,7 @@ const PROJECTS = [
   {
     title: "Beat Paws Odyssey",
     tagline: "Pixel art idle game that accompanies you at work.",
-    cover: "assets/Best/1234.png",
+    cover: "assets/Best/1234.PNG",
     description: "A large-scale project where I served as the lead pixel artist, creating nearly all of the game's visual assets, including characters, environments, and background art.",
     gallery: ["/assets/Best/12.PNG", "/assets/Best/3 (2).png", "/assets/Best/buttons.png"],
     tags: ["Pixel Art", "Game Assets"],
