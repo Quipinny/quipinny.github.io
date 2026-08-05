@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="style.css?v=16" rel="stylesheet"/>
+<link href="style.css?v=17" rel="stylesheet"/>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Person",
@@ -172,15 +172,14 @@
         const target = link.getAttribute('target');
 
         if (href.startsWith('mailto:')) {
-          // Почта — не переходим никуда (mailto ненадёжен, у многих просто
-          // не настроена почтовая программа), а копируем адрес в буфер обмена
+          // Пытаемся открыть почтовую программу (сработает у тех, у кого настроена) —
+          // и ОДНОВРЕМЕННО копируем адрес в буфер, чтобы у остальных тоже
+          // была рабочая подстраховка, а не тупик.
           const email = href.replace('mailto:', '');
+          window.location.href = href;
           navigator.clipboard.writeText(email).then(() => {
-            showToast('Скопировано: ' + email);
-          }).catch(() => {
-            // Если буфер обмена недоступен (редко, старые браузеры) — fallback на mailto
-            window.location.href = href;
-          });
+            showToast('Почта скопирована: ' + email);
+          }).catch(() => {});
         } else if (target === '_blank') {
           window.open(href, '_blank');
         } else {
