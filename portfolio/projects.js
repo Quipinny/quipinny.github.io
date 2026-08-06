@@ -27,7 +27,7 @@ const PROJECTS = [
     tagline: "Pixel art idle game that accompanies you at work.",
     cover: "assets/Best/1234.PNG",
     description: "A large-scale project where I served as the lead pixel artist, creating nearly all of the game's visual assets, including characters, environments, and background art.",
-    gallery: ["assets/Best/12.PNG", "assets/Best/3 (2).png", "assets/Best/buttons.png"],
+    gallery: ["assets/Best/12.PNG", "assets/Best/3 (2).png", "assets/Best/buttons.png", "assets/Best/dog_walk.gif", "assets/Best/1w.PNG",],
     tags: ["Pixel Art", "Game Assets", "Animations"],
 
     link: "https://store.steampowered.com/app/3947470/Beat_Paws_Odyssey/",
