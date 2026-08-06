@@ -48,10 +48,10 @@ function buildGallery() {
     const grid = document.createElement("div");
     grid.className = "grid";
 
-    grouped[category].forEach((work) => {
+    grouped[category].forEach((work, index) => {
       const figure = document.createElement("figure");
       figure.className = "card";
-      figure.onclick = () => openLightbox(work);
+      figure.onclick = () => openLightbox(grouped[category], index);
 
       // В СЕТКЕ всегда показываем лёгкое статичное превью (thumb) —
       // а не оригинальную гифку/видео. Это единственное, что грузится
@@ -111,9 +111,20 @@ function buildGallery() {
   });
 }
 
-// ===== Лайтбокс — увеличенный просмотр по клику. Только тут грузится
-// оригинальный файл (полная гифка/видео), а не превью. =====
-function openLightbox(work) {
+// ===== Лайтбокс — увеличенный просмотр по клику, с перелистыванием влево/вправо.
+// Только тут грузится оригинальный файл (полная гифка/видео), а не превью. =====
+let lightboxItems = [];
+let lightboxIndex = 0;
+
+function openLightbox(items, index) {
+  lightboxItems = items;
+  lightboxIndex = index;
+  renderLightboxMedia();
+  document.getElementById("lightbox").classList.add("is-open");
+}
+
+function renderLightboxMedia() {
+  const work = lightboxItems[lightboxIndex];
   const content = document.getElementById("lightboxContent");
   content.innerHTML = "";
 
@@ -130,13 +141,23 @@ function openLightbox(work) {
   } else {
     media = document.createElement("img");
     media.src = work.file;
-    media.alt = work.title || work.category;
+    media.alt = work.title || work.category || "";
     media.draggable = false;
   }
   content.appendChild(media);
   content.onclick = (e) => e.stopPropagation(); // клик по самой картинке не закрывает лайтбокс
 
-  document.getElementById("lightbox").classList.add("is-open");
+  // Стрелки показываем, только если реально есть куда листать
+  const showArrows = lightboxItems.length > 1;
+  document.querySelectorAll(".lightbox-arrow").forEach((btn) => {
+    btn.style.display = showArrows ? "flex" : "none";
+  });
+}
+
+function navigateLightbox(direction) {
+  if (!lightboxItems.length) return;
+  lightboxIndex = (lightboxIndex + direction + lightboxItems.length) % lightboxItems.length;
+  renderLightboxMedia();
 }
 
 function closeLightbox() {
@@ -144,18 +165,29 @@ function closeLightbox() {
   document.getElementById("lightboxContent").innerHTML = ""; // останавливает видео
 }
 
-// ===== Избранные проекты — карточки-"билеты" вверху страницы =====
+// Стрелки клавиатуры — тоже листают лайтбокс, когда он открыт
+document.addEventListener("keydown", (e) => {
+  const lightboxOpen = document.getElementById("lightbox").classList.contains("is-open");
+  if (!lightboxOpen) return;
+  if (e.key === "ArrowLeft") navigateLightbox(-1);
+  if (e.key === "ArrowRight") navigateLightbox(1);
+  if (e.key === "Escape") closeLightbox();
+});
+
+// ===== Избранные проекты — чередующиеся редакторские блоки (зигзаг) =====
 function renderFeatured() {
   const grid = document.getElementById("featuredGrid");
   if (typeof PROJECTS === "undefined") return; // если projects.js не подключён — просто пропускаем блок
 
-  PROJECTS.forEach((project) => {
-    const card = document.createElement("div");
-    card.className = "ticket-card";
-    card.onclick = () => openProject(project);
+  PROJECTS.forEach((project, i) => {
+    const row = document.createElement("div");
+    row.className = "feature-row" + (i % 2 === 1 ? " feature-row--reverse" : "");
 
-    const cover = document.createElement("div");
-    cover.className = "ticket-cover";
+    // --- Картинка ---
+    const media = document.createElement("div");
+    media.className = "feature-media";
+    media.onclick = () => openProject(project);
+
     const img = document.createElement("img");
     img.src = project.cover;
     img.alt = project.title;
@@ -163,25 +195,42 @@ function renderFeatured() {
     img.draggable = false;
     img.onerror = () => {
       img.style.display = "none";
-      cover.classList.add("is-broken");
+      media.classList.add("is-broken");
       console.warn("Не загрузилась обложка проекта:", img.src, project);
     };
-    cover.appendChild(img);
+    media.appendChild(img);
 
-    const tear = document.createElement("div");
-    tear.className = "ticket-tear";
-
-    const info = document.createElement("div");
-    info.className = "ticket-info";
+    // --- Текст ---
+    const text = document.createElement("div");
+    text.className = "feature-text";
 
     const title = document.createElement("h3");
     title.textContent = project.title;
+    text.appendChild(title);
 
     const tagline = document.createElement("p");
+    tagline.className = "feature-tagline";
     tagline.textContent = project.tagline;
+    text.appendChild(tagline);
 
-    info.appendChild(title);
-    info.appendChild(tagline);
+    // Необязательные поля — показываются только если заполнены в projects.js
+    const metaFields = [
+      ["Role", project.role],
+      ["Tools", project.tools],
+      ["Year", project.year],
+      ["Platform", project.platform],
+    ].filter(([, value]) => value);
+
+    if (metaFields.length) {
+      const meta = document.createElement("ul");
+      meta.className = "feature-meta";
+      metaFields.forEach(([label, value]) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${label}</span>${value}`;
+        meta.appendChild(li);
+      });
+      text.appendChild(meta);
+    }
 
     if (project.tags && project.tags.length) {
       const tags = document.createElement("div");
@@ -191,19 +240,31 @@ function renderFeatured() {
         tag.textContent = t;
         tags.appendChild(tag);
       });
-      info.appendChild(tags);
+      text.appendChild(tags);
     }
 
-    card.appendChild(cover);
-    card.appendChild(tear);
-    card.appendChild(info);
-    grid.appendChild(card);
+    const more = document.createElement("button");
+    more.className = "feature-more";
+    more.textContent = "View case study →";
+    more.onclick = () => openProject(project);
+    text.appendChild(more);
+
+    row.appendChild(media);
+    row.appendChild(text);
+    grid.appendChild(row);
   });
 }
 
 function openProject(project) {
   const content = document.getElementById("projectModalContent");
   content.innerHTML = "";
+
+  // Общий список для лайтбокса: обложка + все картинки галереи проекта,
+  // чтобы можно было пролистать все картинки проекта подряд
+  const projectLightboxItems = [
+    { file: project.cover, title: project.title },
+    ...(project.gallery || []).map((src) => ({ file: src, title: project.title })),
+  ];
 
   const closeBtn = document.createElement("button");
   closeBtn.className = "project-close";
@@ -216,6 +277,8 @@ function openProject(project) {
   cover.src = project.cover;
   cover.alt = project.title;
   cover.draggable = false;
+  cover.style.cursor = "pointer";
+  cover.onclick = () => openLightbox(projectLightboxItems, 0);
   content.appendChild(cover);
 
   const title = document.createElement("h2");
@@ -246,11 +309,14 @@ function openProject(project) {
   if (project.gallery && project.gallery.length) {
     const gal = document.createElement("div");
     gal.className = "project-gallery";
-    project.gallery.forEach((src) => {
+    project.gallery.forEach((src, i) => {
       const im = document.createElement("img");
       im.src = src;
       im.loading = "lazy";
       im.draggable = false;
+      im.style.cursor = "pointer";
+      // +1 потому что в projectLightboxItems первым идёт обложка (индекс 0)
+      im.onclick = () => openLightbox(projectLightboxItems, i + 1);
       gal.appendChild(im);
     });
     content.appendChild(gal);
