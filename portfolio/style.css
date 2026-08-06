@@ -151,7 +151,7 @@ body {
 /* Если картинка не загрузилась (битый путь) — вместо пустоты показываем
    явную подпись, чтобы сразу было видно, что тут не так, а не "ничего нет" */
 .card .thumb-frame.is-broken::after,
-.ticket-cover.is-broken::after {
+.feature-media.is-broken::after {
   content: "нет превью";
   position: absolute;
   inset: 0;
@@ -200,7 +200,7 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(10, 5, 5, 0.92);
-  z-index: 1000;
+  z-index: 1200; /* выше модалки проекта (1000) — лайтбокс открывается поверх неё тоже */
   align-items: center;
   justify-content: center;
   padding: 30px;
@@ -209,6 +209,43 @@ body {
 
 .lightbox.is-open {
   display: flex;
+}
+
+/* Стрелки перелистывания влево/вправо */
+.lightbox-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1201;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid #6b3f14;
+  background: rgba(36, 20, 15, 0.85);
+  color: #f0c674;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.lightbox-arrow:hover {
+  background: #8a1a1a;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.lightbox-arrow--prev { left: 16px; }
+.lightbox-arrow--next { right: 16px; }
+
+@media (max-width: 600px) {
+  .lightbox-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
 }
 
 .lightbox-content {
@@ -320,12 +357,12 @@ body {
 }
 
 /* ============================================================
-   ИЗБРАННЫЕ ПРОЕКТЫ — карточки-"билеты"
+   ИЗБРАННЫЕ ПРОЕКТЫ — чередующиеся редакторские блоки (зигзаг)
    ============================================================ */
 .featured {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 20px 24px 60px;
+  padding: 20px 24px 70px;
   scroll-margin-top: 70px;
 }
 
@@ -336,42 +373,49 @@ body {
   color: #f0c674;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: 40px;
   text-align: center;
 }
 
 .featured-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
 }
 
-.ticket-card {
-  background: linear-gradient(165deg, #3a2018, #24140f);
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid #6b3f14;
+.feature-row {
+  display: flex;
+  align-items: center;
+  gap: 48px;
 }
 
-.ticket-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(240, 198, 116, 0.3);
+.feature-row--reverse {
+  flex-direction: row-reverse;
 }
 
-.ticket-cover {
+.feature-media {
   position: relative;
-  height: 220px;
+  flex: 1 1 48%;
+  min-width: 0;
+  cursor: pointer;
+  aspect-ratio: 4 / 3;
   background: radial-gradient(circle at 50% 35%, #46352c, #241813 75%);
+  border: 1px solid #6b3f14;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.ticket-cover img {
+.feature-media:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(240, 198, 116, 0.3);
+}
+
+.feature-media img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
@@ -381,52 +425,79 @@ body {
   -webkit-user-drag: none;
 }
 
-/* Перфорация "билета" — имитация линии отрыва между обложкой и описанием */
-.ticket-tear {
-  position: relative;
-  height: 0;
-  border-top: 2px dashed #6b3f14;
-  margin: 0 16px;
+.feature-text {
+  flex: 1 1 52%;
+  min-width: 0;
 }
 
-.ticket-tear::before,
-.ticket-tear::after {
-  content: "";
-  position: absolute;
-  top: -9px;
-  width: 18px;
-  height: 18px;
-  background: #150d0d; /* цвет фона страницы — создаёт вырез-полукруг */
-  border-radius: 50%;
-}
-
-.ticket-tear::before { left: -25px; }
-.ticket-tear::after { right: -25px; }
-
-.ticket-info {
-  padding: 18px 20px 22px;
-}
-
-.ticket-info h3 {
+.feature-text h3 {
   font-family: 'Silkscreen', monospace;
   font-weight: 700;
-  font-size: 17px;
+  font-size: clamp(20px, 2.4vw, 30px); /* заголовок масштабируется вместе с шириной колонки текста */
   color: #f0e6d2;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  line-height: 1.3;
 }
 
-.ticket-info p {
+.feature-tagline {
   font-family: 'Space Mono', monospace;
-  font-size: 13px;
+  font-size: clamp(13px, 1.1vw, 15px);
+  color: #d99a4e;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+/* Необязательные поля (Role / Tools / Year / Platform) — показываются,
+   только если заполнены в projects.js */
+.feature-meta {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature-meta li {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
   color: #cbb89a;
-  line-height: 1.5;
+}
+
+.feature-meta li span {
+  display: inline-block;
+  min-width: 70px;
+  color: #8a7360;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 10px;
+  margin-right: 8px;
+}
+
+.feature-more {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 12px;
+  color: #f0c674;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 16px;
+  letter-spacing: 0.05em;
+  transition: transform 0.15s;
+  display: inline-block;
+}
+
+.feature-more:hover {
+  transform: translateX(4px);
 }
 
 .ticket-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 12px;
+  margin-top: 4px;
 }
 
 .ticket-tags span {
@@ -438,6 +509,17 @@ body {
   border: 1px solid rgba(217, 154, 78, 0.4);
   border-radius: 4px;
   padding: 3px 8px;
+}
+
+@media (max-width: 720px) {
+  .feature-row,
+  .feature-row--reverse {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .feature-media {
+    width: 100%;
+  }
 }
 
 /* ============================================================
@@ -593,4 +675,3 @@ body {
     gap: 24px;
   }
 }
-
