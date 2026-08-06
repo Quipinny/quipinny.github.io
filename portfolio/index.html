@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body oncontextmenu="return false;">
 
@@ -43,7 +43,9 @@
 
   <!-- Лайтбокс — увеличенный просмотр отдельной работы по клику -->
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-arrow lightbox-arrow--prev" onclick="event.stopPropagation(); navigateLightbox(-1)" aria-label="Предыдущая">‹</button>
     <div class="lightbox-content" id="lightboxContent"></div>
+    <button class="lightbox-arrow lightbox-arrow--next" onclick="event.stopPropagation(); navigateLightbox(1)" aria-label="Следующая">›</button>
   </div>
 
   <!-- Модалка проекта — полная информация по клику на карточку-билет -->
@@ -53,6 +55,6 @@
 
   <script src="works.js?v=2"></script>
   <script src="projects.js?v=1"></script>
-  <script src="script.js?v=6"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>
