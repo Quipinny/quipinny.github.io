@@ -18,7 +18,7 @@ const PROJECTS = [
     cover: "assets/Best/ww.PNG",
     description: "A successful commercial pixel art asset pack featuring over 500 fish sprites, ranging from real-world species to original fantasy creatures of my own design. The asset pack was created and published by me on my itch.io page, where it has received several thousand views and hundreds of downloads. The collection includes a wide variety of fish, from realistic aquatic species to unique fantasy designs, making it suitable for games across multiple genres.",
     tags: ["Icons", "Game Assets"],
-    gallery: ["assets/Best/aaaaa.PNG", "portfolio/assets/Best/asq.png", "portfolio/assets/Best/qwer.png"],
+    gallery: ["assets/Best/aaaaa.PNG", "assets/Best/asq.png", "assets/Best/qwer.png"],
     link: "https://quipinny.itch.io/very-big-fish-pack",
     linkLabel: "Look at itch.io",
   },
@@ -29,8 +29,7 @@ const PROJECTS = [
     description: "A large-scale project where I served as the lead pixel artist, creating nearly all of the game's visual assets, including characters, environments, and background art.",
     gallery: ["assets/Best/12.PNG", "assets/Best/3 (2).png", "assets/Best/buttons.png"],
     tags: ["Pixel Art", "Game Assets"],
-    
-    gallery: [],
+
     link: "https://quipinny.itch.io/",
     linkLabel: "Look at itch.io",
   },
