@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="style.css?v=17" rel="stylesheet"/>
+<link href="style.css?v=18" rel="stylesheet"/>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Person",
@@ -172,14 +172,10 @@
         const target = link.getAttribute('target');
 
         if (href.startsWith('mailto:')) {
-          // Пытаемся открыть почтовую программу (сработает у тех, у кого настроена) —
-          // и ОДНОВРЕМЕННО копируем адрес в буфер, чтобы у остальных тоже
-          // была рабочая подстраховка, а не тупик.
+          // Вместо мгновенного (и ненадёжного) перехода по mailto —
+          // показываем окошко с полем для сообщения и адресом почты.
           const email = href.replace('mailto:', '');
-          window.location.href = href;
-          navigator.clipboard.writeText(email).then(() => {
-            showToast('Почта скопирована: ' + email);
-          }).catch(() => {});
+          openContactModal(email);
         } else if (target === '_blank') {
           window.open(href, '_blank');
         } else {
@@ -192,6 +188,45 @@
         stat.style.display = 'block';
       }, ANIMATION_DURATION);
     }
+
+    // ===== Окно связи (открывается по клику на HIRE) =====
+    let contactEmail = '';
+
+    function openContactModal(email) {
+      contactEmail = email;
+      document.getElementById('contactEmailText').textContent = email;
+      document.getElementById('contactModal').classList.add('is-open');
+      document.getElementById('contactMessage').focus();
+    }
+
+    function closeContactModal() {
+      document.getElementById('contactModal').classList.remove('is-open');
+    }
+
+    function copyContactEmail() {
+      navigator.clipboard.writeText(contactEmail).then(() => {
+        showToast('Скопировано: ' + contactEmail);
+      }).catch(() => {});
+    }
+
+    function sendContactMessage() {
+      const message = document.getElementById('contactMessage').value.trim();
+      const body = message || "Hi! I'd like to talk about a project.";
+      const mailtoUrl = 'mailto:' + contactEmail + '?subject=' + encodeURIComponent('Hire request from quipinny.com') + '&body=' + encodeURIComponent(body);
+
+      // Пытаемся открыть почтовую программу...
+      window.location.href = mailtoUrl;
+      // ...и одновременно копируем адрес в буфер — если почта не открылась
+      // (не у всех настроена), человек всё равно не останется ни с чем.
+      navigator.clipboard.writeText(contactEmail).then(() => {
+        showToast('Если почта не открылась — адрес скопирован: ' + contactEmail);
+      }).catch(() => {});
+    }
+
+    // Закрытие модалки по Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeContactModal();
+    });
 
     // Небольшое всплывающее уведомление снизу экрана (например "Скопировано")
     let toastTimer = null;
@@ -210,6 +245,20 @@
         toast.classList.remove('is-visible');
       }, 2200);
     }
-  </script>
+  </script>  <!-- Окно связи — открывается по клику на HIRE -->
+  <div class="contact-modal" id="contactModal" onclick="if(event.target===this) closeContactModal()">
+    <div class="contact-modal-content">
+      <button class="contact-close" onclick="closeContactModal()" aria-label="Закрыть">×</button>
+      <h2 class="contact-title">Let's work together</h2>
+      <p class="contact-email-row">
+        Write to <strong id="contactEmailText">quipinny@gmail.com</strong>
+        <button class="contact-copy-btn" onclick="copyContactEmail()">Copy</button>
+      </p>
+      <textarea id="contactMessage" class="contact-textarea" placeholder="Tell me a bit about your project..." rows="5"></textarea>
+      <button class="contact-send-btn" onclick="sendContactMessage()">Open in mail app →</button>
+      <p class="contact-hint">Opens your email app with this message pre-filled. If nothing happens — the address is already copied, just paste it anywhere.</p>
+    </div>
+  </div>
+
 </body>
 </html>
