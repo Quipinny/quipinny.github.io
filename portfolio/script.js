@@ -1,343 +1,676 @@
-// Этот файл собирает страницу автоматически на основе списка WORKS из works.js.
-// Трогать его не нужно, если просто добавляешь новые работы — правь только works.js.
-
-function slugify(text) {
-  return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-function isVideoFile(path) {
-  return /\.(mp4|webm|mov)$/i.test(path);
+body {
+  /* Бесконечный тайловый паттерн из background2.png (328x1080px, вертикальные полосы) */
+  background-image: url("background2.png");
+  background-repeat: repeat;
+  background-size: 328px 1080px; /* родной размер картинки — чтобы плитки стыковались без швов */
+  color: #f0e6d2;
+  font-family: 'VT323', monospace; /* читаемый шрифт для текста — Silkscreen только для крупных заголовков */
+  font-weight: 400;
+  font-size: 17px; /* VT323 тоньше по начертанию — базовый размер чуть выше обычного */
+  line-height: 1.6;
+  /* Защита от копирования текста/долгого тапа на телефоне (см. общее примечание внизу файла) */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
-function buildGallery() {
-  const gallery = document.getElementById("gallery");
-  const topnavLinks = document.getElementById("topnav-links");
-
-  // Группируем работы по category, сохраняя порядок первого появления
-  const categories = [];
-  const grouped = {};
-  WORKS.forEach((work) => {
-    if (!grouped[work.category]) {
-      grouped[work.category] = [];
-      categories.push(work.category);
-    }
-    grouped[work.category].push(work);
-  });
-
-  categories.forEach((category) => {
-    const id = slugify(category);
-
-    // Ссылка в верхней навигации
-    const link = document.createElement("a");
-    link.href = "#" + id;
-    link.textContent = category;
-    topnavLinks.appendChild(link);
-
-    // Секция с работами этой категории
-    const section = document.createElement("section");
-    section.className = "category-section";
-    section.id = id;
-
-    // Липкий заголовок секции — виден, пока листаешь именно эту категорию
-    const heading = document.createElement("h2");
-    heading.className = "section-title";
-    heading.textContent = category;
-    section.appendChild(heading);
-
-    // Сетка карточек с работами
-    const grid = document.createElement("div");
-    grid.className = "grid";
-
-    grouped[category].forEach((work, index) => {
-      const figure = document.createElement("figure");
-      figure.className = "card";
-      figure.onclick = () => openLightbox(grouped[category], index);
-
-      // В СЕТКЕ всегда показываем лёгкое статичное превью (thumb) —
-      // а не оригинальную гифку/видео. Это единственное, что грузится
-      // при открытии страницы. Если thumb почему-то не указан — берём
-      // оригинал как запасной вариант (например, для новых работ,
-      // для которых превью ещё не сделано).
-      const img = document.createElement("img");
-      img.src = work.thumb || work.file;
-      img.alt = work.title || category;
-      img.loading = "lazy";
-      img.draggable = false;
-
-      const frame = document.createElement("div");
-      frame.className = "thumb-frame";
-      frame.appendChild(img);
-
-      // Если thumb (заранее сохранённое превью) не нашёлся на сервере —
-      // карточка не остаётся пустой: пробуем показать сам оригинальный
-      // файл (gif/png). Видео так показать нельзя (img не проигрывает mp4),
-      // поэтому для видео без превью просто помечаем "нет превью".
-      let triedFallback = false;
-      img.onerror = () => {
-        const canFallbackToFile =
-          !triedFallback && work.thumb && !isVideoFile(work.file) && img.src.indexOf(work.file) === -1;
-        if (canFallbackToFile) {
-          triedFallback = true;
-          img.src = work.file;
-          return;
-        }
-        img.style.display = "none";
-        frame.classList.add("is-broken");
-        console.warn("Не загрузилось превью (и оригинал тоже):", work);
-      };
-
-      // Маленькая иконка "▶" поверх превью, если это видео/гифка —
-      // чтобы было понятно, что по клику откроется анимация
-      if (isVideoFile(work.file) || /\.gif$/i.test(work.file)) {
-        const badge = document.createElement("span");
-        badge.className = "play-badge";
-        badge.textContent = "▶";
-        frame.appendChild(badge);
-      }
-
-      figure.appendChild(frame);
-
-      if (work.title) {
-        const caption = document.createElement("figcaption");
-        caption.textContent = work.title;
-        figure.appendChild(caption);
-      }
-
-      grid.appendChild(figure);
-    });
-
-    section.appendChild(grid);
-    gallery.appendChild(section);
-  });
+.font-display {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
 }
 
-// ===== Лайтбокс — увеличенный просмотр по клику, с перелистыванием влево/вправо.
-// Только тут грузится оригинальный файл (полная гифка/видео), а не превью. =====
-let lightboxItems = [];
-let lightboxIndex = 0;
-
-function openLightbox(items, index) {
-  lightboxItems = items;
-  lightboxIndex = index;
-  renderLightboxMedia();
-  document.getElementById("lightbox").classList.add("is-open");
+/* ===== Верхняя навигация — липкая, всегда видна при скролле ===== */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 20px;
+  background: #2a1414;
+  border-bottom: 3px solid #8a1a1a;
 }
 
-function renderLightboxMedia() {
-  const work = lightboxItems[lightboxIndex];
-  const content = document.getElementById("lightboxContent");
-  content.innerHTML = "";
+.topnav-logo {
+  display: block;
+}
 
-  let media;
-  if (isVideoFile(work.file)) {
-    media = document.createElement("video");
-    media.src = work.file;
-    media.autoplay = true;
-    media.muted = true;
-    media.loop = true;
-    media.playsInline = true;
-    media.setAttribute("controlsList", "nodownload noremoteplayback");
-    media.disablePictureInPicture = true;
-  } else {
-    media = document.createElement("img");
-    media.src = work.file;
-    media.alt = work.title || work.category || "";
-    media.draggable = false;
+.topnav-logo img {
+  height: 40px;
+  width: auto;
+  display: block;
+  -webkit-user-drag: none; /* нельзя перетащить картинку мышкой, чтобы сохранить */
+}
+
+.topnav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topnav-links a {
+  color: #f0e6d2;
+  text-decoration: none;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 2px solid #6b3f14;
+  border-radius: 4px;
+  background: #3a1f1f;
+  transition: 0.15s;
+}
+
+.topnav-links a:hover {
+  background: #8a1a1a;
+  border-color: #f0c674;
+}
+
+/* ===== Секции категорий ===== */
+.category-section {
+  padding: 0 20px 40px;
+  scroll-margin-top: 70px; /* чтобы при переходе по ссылке заголовок не прятался под топ-навигацию */
+}
+
+/* Липкий заголовок секции — прилипает под топ-навигацией, пока листаешь эту категорию */
+.section-title {
+  position: sticky;
+  top: 58px; /* высота топ-навигации */
+  z-index: 50;
+  background: #1a0f0f;
+  padding: 16px 0 10px;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 20px;
+  color: #f0c674;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid #6b3f14;
+}
+
+/* ===== Сетка карточек ===== */
+.grid {
+  column-width: 220px; /* колонки подбираются под ширину экрана автоматически */
+  column-gap: 22px;
+  padding-top: 20px;
+}
+
+.card {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 22px;
+  break-inside: avoid; /* карточка не разрывается между колонками */
+  background: linear-gradient(160deg, #331c1c, #24130f);
+  border: 1px solid #6b3f14;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer; /* подсказывает, что можно кликнуть и увеличить */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: #f0c674;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(240, 198, 116, 0.25);
+}
+
+/* Рамка вокруг самой картинки — чуть светлее чистого чёрного и с еле заметным
+   свечением по краю, чтобы работы с чёрным фоном не "терялись" на карточке.
+   Тонкая рамка (1px) внутри задаёт видимую границу кадра — так даже
+   картинки с собственным чёрным фоном не сливаются с подложкой. */
+.card .thumb-frame {
+  position: relative;
+  padding: 6px;
+  background: radial-gradient(circle at 50% 35%, #46352c, #2c211b 75%);
+  box-shadow: inset 0 0 0 1px rgba(240, 198, 116, 0.12);
+}
+
+.card img {
+  display: block;
+  width: 100%;
+  height: auto; /* высота идёт от реальных пропорций картинки — рамка облегает её вплотную */
+  object-fit: initial;
+  border-radius: 4px;
+  outline: 1px solid rgba(240, 198, 116, 0.18); /* видимая граница кадра поверх картинки */
+  outline-offset: -1px;
+  image-rendering: pixelated; /* чёткие пиксели без размытия при масштабировании */
+  -webkit-user-drag: none;
+  pointer-events: none; /* клик всегда попадает на .card */
+}
+
+/* Если картинка не загрузилась (битый путь) — вместо пустоты показываем
+   явную подпись, чтобы сразу было видно, что тут не так, а не "ничего нет" */
+.card .thumb-frame.is-broken::after,
+.ticket-cover.is-broken::after {
+  content: "нет превью";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  color: #8a7360;
+  border: 1px dashed #6b3f14;
+  border-radius: 6px;
+  margin: 4px;
+}
+
+.card .thumb-frame.is-broken {
+  min-height: 140px; /* чтобы подписи "нет превью" было где поместиться без картинки */
+}
+
+/* Значок "▶" поверх превью гифок/видео — подсказывает, что там анимация */
+.play-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(240, 198, 116, 0.4);
+  color: #f0c674;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.card figcaption {
+  padding: 10px 8px;
+  font-size: 11px;
+  text-align: center;
+  color: #cbb89a;
+  border-top: 1px solid rgba(107, 63, 20, 0.5);
+}
+
+/* ===== Лайтбокс — увеличенный просмотр по клику ===== */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 5, 0.92);
+  z-index: 1200; /* выше модалки проекта (1000) — лайтбокс открывается поверх неё тоже */
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  cursor: zoom-out;
+}
+
+.lightbox.is-open {
+  display: flex;
+}
+
+/* Стрелки перелистывания влево/вправо */
+.lightbox-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1201;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid #6b3f14;
+  background: rgba(36, 20, 15, 0.85);
+  color: #f0c674;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.lightbox-arrow:hover {
+  background: #8a1a1a;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.lightbox-arrow--prev { left: 16px; }
+.lightbox-arrow--next { right: 16px; }
+
+@media (max-width: 600px) {
+  .lightbox-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
   }
-  content.appendChild(media);
-  content.onclick = (e) => e.stopPropagation(); // клик по самой картинке не закрывает лайтбокс
-
-  // Стрелки показываем, только если реально есть куда листать
-  const showArrows = lightboxItems.length > 1;
-  document.querySelectorAll(".lightbox-arrow").forEach((btn) => {
-    btn.style.display = showArrows ? "flex" : "none";
-  });
 }
 
-function navigateLightbox(direction) {
-  if (!lightboxItems.length) return;
-  lightboxIndex = (lightboxIndex + direction + lightboxItems.length) % lightboxItems.length;
-  renderLightboxMedia();
+.lightbox-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: default;
+  /* Светлая подложка-паспарту под самой работой — чтобы чёрные части
+     персонажей (руки, ноги, одежда) не терялись на тёмном фоне лайтбокса */
+  background: #4a3a30;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
-function closeLightbox() {
-  document.getElementById("lightbox").classList.remove("is-open");
-  document.getElementById("lightboxContent").innerHTML = ""; // останавливает видео
+.lightbox-content img,
+.lightbox-content video {
+  max-width: 86vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  image-rendering: pixelated;
+  border-radius: 4px;
+  -webkit-user-drag: none;
+  display: block;
 }
 
-// Стрелки клавиатуры — тоже листают лайтбокс, когда он открыт
-document.addEventListener("keydown", (e) => {
-  const lightboxOpen = document.getElementById("lightbox").classList.contains("is-open");
-  if (!lightboxOpen) return;
-  if (e.key === "ArrowLeft") navigateLightbox(-1);
-  if (e.key === "ArrowRight") navigateLightbox(1);
-  if (e.key === "Escape") closeLightbox();
-});
-
-// ===== Избранные проекты — чередующиеся редакторские блоки (зигзаг) =====
-function renderFeatured() {
-  const grid = document.getElementById("featuredGrid");
-  if (typeof PROJECTS === "undefined") return; // если projects.js не подключён — просто пропускаем блок
-
-  PROJECTS.forEach((project, i) => {
-    const row = document.createElement("div");
-    row.className = "feature-row" + (i % 2 === 1 ? " feature-row--reverse" : "");
-
-    // --- Картинка ---
-    const media = document.createElement("div");
-    media.className = "feature-media";
-    media.onclick = () => openProject(project);
-
-    const img = document.createElement("img");
-    img.src = project.cover;
-    img.alt = project.title;
-    img.loading = "lazy";
-    img.draggable = false;
-    img.onerror = () => {
-      img.style.display = "none";
-      media.classList.add("is-broken");
-      console.warn("Не загрузилась обложка проекта:", img.src, project);
-    };
-    media.appendChild(img);
-
-    // --- Текст ---
-    const text = document.createElement("div");
-    text.className = "feature-text";
-
-    const title = document.createElement("h3");
-    title.textContent = project.title;
-    text.appendChild(title);
-
-    const tagline = document.createElement("p");
-    tagline.className = "feature-tagline";
-    tagline.textContent = project.tagline;
-    text.appendChild(tagline);
-
-    // Необязательные поля — показываются только если заполнены в projects.js
-    const metaFields = [
-      ["Role", project.role],
-      ["Tools", project.tools],
-      ["Year", project.year],
-      ["Platform", project.platform],
-    ].filter(([, value]) => value);
-
-    if (metaFields.length) {
-      const meta = document.createElement("ul");
-      meta.className = "feature-meta";
-      metaFields.forEach(([label, value]) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<span>${label}</span>${value}`;
-        meta.appendChild(li);
-      });
-      text.appendChild(meta);
-    }
-
-    if (project.tags && project.tags.length) {
-      const tags = document.createElement("div");
-      tags.className = "ticket-tags";
-      project.tags.forEach((t) => {
-        const tag = document.createElement("span");
-        tag.textContent = t;
-        tags.appendChild(tag);
-      });
-      text.appendChild(tags);
-    }
-
-    const more = document.createElement("button");
-    more.className = "feature-more";
-    more.textContent = "View case study →";
-    more.onclick = () => openProject(project);
-    text.appendChild(more);
-
-    row.appendChild(media);
-    row.appendChild(text);
-    grid.appendChild(row);
-  });
-}
-
-function openProject(project) {
-  const content = document.getElementById("projectModalContent");
-  content.innerHTML = "";
-
-  // Общий список для лайтбокса: обложка + все картинки галереи проекта,
-  // чтобы можно было пролистать все картинки проекта подряд
-  const projectLightboxItems = [
-    { file: project.cover, title: project.title },
-    ...(project.gallery || []).map((src) => ({ file: src, title: project.title })),
-  ];
-
-  const closeBtn = document.createElement("button");
-  closeBtn.className = "project-close";
-  closeBtn.textContent = "×";
-  closeBtn.onclick = closeProject;
-  content.appendChild(closeBtn);
-
-  const cover = document.createElement("img");
-  cover.className = "project-cover";
-  cover.src = project.cover;
-  cover.alt = project.title;
-  cover.draggable = false;
-  cover.style.cursor = "pointer";
-  cover.onclick = () => openLightbox(projectLightboxItems, 0);
-  content.appendChild(cover);
-
-  const title = document.createElement("h2");
-  title.textContent = project.title;
-  content.appendChild(title);
-
-  const tagline = document.createElement("p");
-  tagline.className = "project-tagline";
-  tagline.textContent = project.tagline;
-  content.appendChild(tagline);
-
-  if (project.tags && project.tags.length) {
-    const tags = document.createElement("div");
-    tags.className = "ticket-tags";
-    project.tags.forEach((t) => {
-      const tag = document.createElement("span");
-      tag.textContent = t;
-      tags.appendChild(tag);
-    });
-    content.appendChild(tags);
+/* На маленьких экранах — карточки чуть меньше, навигация компактнее */
+@media (max-width: 600px) {
+  .grid {
+    column-width: 130px;
+    column-gap: 10px;
   }
-
-  const desc = document.createElement("p");
-  desc.className = "project-desc";
-  desc.textContent = project.description;
-  content.appendChild(desc);
-
-  if (project.gallery && project.gallery.length) {
-    const gal = document.createElement("div");
-    gal.className = "project-gallery";
-    project.gallery.forEach((src, i) => {
-      const im = document.createElement("img");
-      im.src = src;
-      im.loading = "lazy";
-      im.draggable = false;
-      im.style.cursor = "pointer";
-      // +1 потому что в projectLightboxItems первым идёт обложка (индекс 0)
-      im.onclick = () => openLightbox(projectLightboxItems, i + 1);
-      gal.appendChild(im);
-    });
-    content.appendChild(gal);
+  .card {
+    margin-bottom: 10px;
   }
-
-  if (project.link) {
-    const link = document.createElement("a");
-    link.className = "project-link";
-    link.href = project.link;
-    link.target = "_blank";
-    link.textContent = project.linkLabel || "View project";
-    content.appendChild(link);
+  .topnav {
+    padding: 8px 14px;
   }
-
-  document.getElementById("projectModal").classList.add("is-open");
+  .topnav-logo img {
+    height: 30px;
+  }
 }
 
-function closeProject() {
-  document.getElementById("projectModal").classList.remove("is-open");
+/* ============================================================
+   ШАПКА (HERO)
+   ============================================================ */
+.hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 24px 50px;
+  text-align: center;
 }
 
-renderFeatured();
+.hero-eyebrow {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #d99a4e;
+  margin-bottom: 14px;
+}
 
-buildGallery();
+.hero-title {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: clamp(40px, 9vw, 84px);
+  color: #f0c674;
+  text-shadow: 3px 3px 0 #6b1414, 0 0 40px rgba(240, 198, 116, 0.25);
+  letter-spacing: 0.04em;
+  margin-bottom: 18px;
+}
+
+.hero-tagline {
+  font-family: 'VT323', monospace;
+  font-size: 19px;
+  color: #cbb89a;
+  max-width: 560px;
+  margin: 0 auto 34px;
+  line-height: 1.7;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-num {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 28px;
+  color: #f0c674;
+}
+
+.stat-label {
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8a7360;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   ИЗБРАННЫЕ ПРОЕКТЫ — крупные карточки-"билеты", кликабельны целиком
+   ============================================================ */
+.featured {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px 70px;
+  scroll-margin-top: 70px;
+}
+
+.section-title-main {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 22px;
+  color: #f0c674;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* крупнее прежних 280px */
+  gap: 32px;
+}
+
+.ticket-card {
+  background: linear-gradient(165deg, #3a2018, #24140f);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #6b3f14;
+}
+
+.ticket-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(240, 198, 116, 0.3);
+}
+
+.ticket-cover {
+  position: relative;
+  height: 260px; /* крупнее прежних 220px */
+  background: radial-gradient(circle at 50% 35%, #46352c, #241813 75%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.ticket-cover img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  outline: 1px solid rgba(240, 198, 116, 0.18);
+  outline-offset: -1px;
+  image-rendering: pixelated;
+  -webkit-user-drag: none;
+}
+
+/* Перфорация "билета" — имитация линии отрыва между обложкой и описанием */
+.ticket-tear {
+  position: relative;
+  height: 0;
+  border-top: 2px dashed #6b3f14;
+  margin: 0 16px;
+}
+
+.ticket-tear::before,
+.ticket-tear::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  background: #150d0d; /* цвет фона страницы — создаёт вырез-полукруг */
+  border-radius: 50%;
+}
+
+.ticket-tear::before { left: -25px; }
+.ticket-tear::after { right: -25px; }
+
+.ticket-info {
+  padding: 20px 22px 26px;
+}
+
+.ticket-info h3 {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 19px;
+  color: #f0e6d2;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.ticket-info p {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  color: #cbb89a;
+  line-height: 1.5;
+}
+
+/* Необязательные поля (Role / Tools / Year / Platform) — показываются,
+   только если заполнены в projects.js */
+.feature-meta {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature-meta li {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: #cbb89a;
+}
+
+.feature-meta li span {
+  display: inline-block;
+  min-width: 70px;
+  color: #8a7360;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.feature-more {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 12px;
+  color: #f0c674;
+  margin-top: 14px;
+  letter-spacing: 0.05em;
+}
+
+.ticket-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.ticket-tags span {
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #d99a4e;
+  border: 1px solid rgba(217, 154, 78, 0.4);
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+
+/* ============================================================
+   МОДАЛКА ПРОЕКТА — полная информация по клику на билет
+   ============================================================ */
+.project-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 4, 4, 0.92);
+  z-index: 1000;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  cursor: zoom-out;
+}
+
+.project-modal.is-open {
+  display: flex;
+}
+
+.project-modal-content {
+  position: relative;
+  background: linear-gradient(165deg, #3a2018, #24140f);
+  border: 1px solid #6b3f14;
+  border-radius: 12px;
+  max-width: 760px;
+  width: 100%;
+  padding: 40px;
+  cursor: default;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+}
+
+.project-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #6b3f14;
+  background: #24140f;
+  color: #f0c674;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.project-cover {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  background: radial-gradient(circle at 50% 35%, #46352c, #241813 75%);
+  border-radius: 8px;
+  image-rendering: pixelated;
+  -webkit-user-drag: none;
+  margin-bottom: 24px;
+}
+
+.project-modal-content h2 {
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 24px;
+  color: #f0c674;
+  margin-bottom: 8px;
+}
+
+.project-tagline {
+  font-family: 'VT323', monospace;
+  color: #d99a4e;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.project-desc {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #e5d9c3;
+  margin: 16px 0;
+  white-space: pre-line;
+}
+
+.project-gallery {
+  column-width: 240px; /* колонки шире прежних 140px — фото крупнее */
+  column-gap: 14px;
+  margin: 20px 0;
+}
+
+.project-gallery img {
+  display: block;
+  width: 100%;
+  height: auto; /* рамка облегает картинку по её реальным пропорциям, без обрезки */
+  margin-bottom: 14px;
+  break-inside: avoid;
+  background: #1c1210;
+  border-radius: 6px;
+  image-rendering: pixelated;
+  -webkit-user-drag: none;
+}
+
+/* Каждое 4-е фото в галерее проекта — на всю ширину, для разнообразия
+   (тот же приём, что и в основной сетке работ) */
+.project-gallery img:nth-child(4n+1) {
+  column-span: all;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.project-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  color: #150d0d;
+  background: #f0c674;
+  padding: 12px 22px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+
+.project-link:hover {
+  transform: scale(1.05);
+}
+
+/* ============================================================
+   Раньше здесь была grid-сетка с фиксированной высотой карточек —
+   из-за неё рамка была намного больше самого превью. Теперь сетка
+   "masonry" (колонки): высота каждой карточки идёт от реальных
+   пропорций её картинки — рамка облегает превью без пустых полей,
+   а разброс размеров получается сам собой из разных пропорций работ.
+
+   Ниже — акценты для разнообразия: часть карточек занимает всю ширину
+   ряда и явно крупнее остальных, картинка внутри всё так же облегается
+   по своим пропорциям, без пустого "воздуха" вокруг. */
+.grid .card:nth-child(7n+1) {
+  column-span: all;
+  max-width: 640px; /* заметно крупнее, было 480px */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.grid .card:nth-child(11n+4) {
+  column-span: all;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 700px) {
+  .hero-title {
+    font-size: 48px;
+  }
+  .hero-stats {
+    gap: 24px;
+  }
+}
