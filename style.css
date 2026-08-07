@@ -453,8 +453,8 @@ img, video {
 }
 
 .contact-hint {
-  font-family: 'Space Mono', monospace;
-  font-size: 10px;
+  font-family: 'VT323', monospace;
+  font-size: 13px;
   color: #8a7360;
   margin-top: 10px;
   line-height: 1.5;
